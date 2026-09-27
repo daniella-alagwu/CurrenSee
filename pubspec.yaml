@@ -13,6 +13,11 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_native_splash: ^2.4.6
+  firebase_core: ^4.15.0
+  firebase_auth: ^6.7.0
+  http: ^1.6.0
+  countries_utils: ^2.0.0
+  currency_picker: ^2.0.22
 
 dev_dependencies:
   flutter_test:
