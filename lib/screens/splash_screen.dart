@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/assets.dart';
 import '../constants/colors.dart';
 
-/// Animated splash: glow pulse -> mark pops in -> wordmark slides up ->
-/// tagline + gold progress bar -> fades to [nextBuilder].
-/// Requires Flutter 3.27+ (uses Color.withValues).
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, required this.nextBuilder});
 
