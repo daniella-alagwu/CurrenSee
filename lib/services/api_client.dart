@@ -39,26 +39,30 @@ class ApiClient {
     };
   }
 
-  static Future<Map<String, dynamic>> _authedPost(
-    String path,
-    Map<String, dynamic> body,
-  ) async {
+  static Future<Map<String, dynamic>> _authedRequest(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+  }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) throw ApiException('Not signed in.');
     final token = await user.getIdToken();
+    if (token == null) throw ApiException('Could not refresh your sign-in token.');
 
     late final http.Response response;
     try {
-      response = await http
-          .post(
-            Uri.parse('$baseUrl$path'),
-            headers: {
-              'Authorization': 'Bearer $token',
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode(body),
-          )
-          .timeout(const Duration(seconds: 15));
+      final uri = Uri.parse('$baseUrl$path');
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+      response = method == 'GET'
+          ? await http.get(uri, headers: headers).timeout(
+                const Duration(seconds: 15),
+              )
+          : await http
+              .post(uri, headers: headers, body: jsonEncode(body ?? {}))
+              .timeout(const Duration(seconds: 15));
     } catch (error) {
       throw ApiException(
         'Could not reach CurrenSee backend at $baseUrl. Check that it is running and the address is correct. ($error)',
@@ -85,6 +89,15 @@ class ApiClient {
     }
     return decoded;
   }
+
+  static Future<Map<String, dynamic>> _authedPost(
+    String path,
+    Map<String, dynamic> body,
+  ) =>
+      _authedRequest('POST', path, body: body);
+
+  static Future<Map<String, dynamic>> _authedGet(String path) =>
+      _authedRequest('GET', path);
 
   static Future<void> registerProfile({
     String? name,
@@ -119,4 +132,7 @@ class ApiClient {
   static Future<void> verifyOtp(String code) async {
     await _authedPost('/users/otp/verify', {'code': code});
   }
+
+  static Future<Map<String, dynamic>> getAdminIdentity() =>
+      _authedGet('/admin/me');
 }

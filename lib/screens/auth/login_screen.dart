@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/auth/auth_widgets.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _email.text.trim(),
         password: _password.text,
       );
-      // AuthGate listens to authStateChanges and swaps in HomeScreen.
+      
     } catch (e) {
       if (mounted) showAuthError(context, authErrorMessage(e));
     } finally {
@@ -85,6 +86,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 color: AppColors.textMuted,
                 onPressed: () => setState(() => _obscure = !_obscure),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: AuthLink(
+                label: 'Forgot password?',
+                onPressed: _loading
+                    ? () {}
+                    : () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ForgotPasswordScreen(
+                              initialEmail: _email.text.trim(),
+                            ),
+                          ),
+                        ),
               ),
             ),
             const SizedBox(height: 24),

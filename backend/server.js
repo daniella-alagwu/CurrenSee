@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import "./config/env.js";
 import userRoutes from "./routes/userRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 app.use((req, res) => {

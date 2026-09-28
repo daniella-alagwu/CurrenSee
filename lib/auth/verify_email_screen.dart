@@ -84,7 +84,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthScaffold(
-      title: 'Check your email',
+      title: 'Check your email or spam',
       subtitle: "We sent a verification link to $_email.",
       child: Column(
         children: [

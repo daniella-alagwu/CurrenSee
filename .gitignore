@@ -18,10 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 /backend/*firebase-adminsdk*.json
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -33,6 +30,7 @@ migrate_working_dir/
 /build/
 /coverage/
 .env
+
 serviceAccountKey.json
 node_modules/
 # Backend secrets and Firebase service-account credentials
