@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import 'auth_widgets.dart';
 import 'package:currensee/screens/home/home_screen.dart';
+import 'package:currensee/screens/admin/admin_home.dart';
 import '../services/api_client.dart';
 import 'verify_email_screen.dart';
 
@@ -21,6 +22,7 @@ class EmailVerificationGate extends StatefulWidget {
 class _EmailVerificationGateState extends State<EmailVerificationGate> {
   bool _verified = false;
   bool _profileReady = false;
+  bool _isAdmin = false;
   bool _profileSaving = false;
   bool _checking = false;
   String? _profileError;
@@ -60,10 +62,13 @@ class _EmailVerificationGateState extends State<EmailVerificationGate> {
       }
 
       await ApiClient.registerProfile();
+      final tokenResult = await refreshed.getIdTokenResult(true);
+      final isAdmin = tokenResult.claims?['admin'] == true;
       if (mounted) {
         setState(() {
           _profileReady = true;
           _profileSaving = false;
+          _isAdmin = isAdmin;
         });
       }
     } catch (error) {
@@ -80,7 +85,9 @@ class _EmailVerificationGateState extends State<EmailVerificationGate> {
   }
   @override
   Widget build(BuildContext context) {
-    if (_profileReady) return const HomeScreen();
+    if (_profileReady) {
+      return _isAdmin ? const AdminHome() : const HomeScreen();
+    }
     if (_verified) {
       return Scaffold(
         backgroundColor: AppColors.emeraldBg,

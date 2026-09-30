@@ -72,8 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => _loading = true);
     try {
-      // Firebase owns the credentials. The backend stores the profile and
-      // selected defaults, keyed to the authenticated Firebase UID.
+     
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
         email: _email.text.trim(),

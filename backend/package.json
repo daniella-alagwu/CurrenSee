@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --use-system-ca --watch server.js"
+    "dev": "node --use-system-ca --watch server.js",
+    "admin:role": "node scripts/setAdminRole.js",
+    "admin:create:dev": "node scripts/createDevAdmin.js"
   },
   "type": "module",
   "dependencies": {

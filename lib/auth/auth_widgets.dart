@@ -94,8 +94,6 @@ class AuthScaffold extends StatelessWidget {
     );
   }
 }
-
-/// Text field styled with brand colors.
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
     super.key,
@@ -252,7 +250,6 @@ void showAuthError(BuildContext context, String message) {
     );
 }
 
-/// Turns Firebase errors into messages a user can act on.
 String authErrorMessage(Object error) {
   if (error is ApiException) return error.message;
   if (error is FirebaseAuthException) {
