@@ -43,6 +43,7 @@ class ApiClient {
     String method,
     String path, {
     Map<String, dynamic>? body,
+    Map<String, String>? queryParameters,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) throw ApiException('Not signed in.');
@@ -51,18 +52,34 @@ class ApiClient {
 
     late final http.Response response;
     try {
-      final uri = Uri.parse('$baseUrl$path');
+      var uri = Uri.parse('$baseUrl$path');
+      if (queryParameters != null) {
+        uri = uri.replace(queryParameters: queryParameters);
+      }
       final headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       };
-      response = method == 'GET'
-          ? await http.get(uri, headers: headers).timeout(
-                const Duration(seconds: 15),
-              )
-          : await http
-              .post(uri, headers: headers, body: jsonEncode(body ?? {}))
+      final requestBody = jsonEncode(body ?? {});
+      switch (method) {
+        case 'GET':
+          response = await http.get(uri, headers: headers).timeout(
+            const Duration(seconds: 15),
+          );
+          break;
+        case 'POST':
+          response = await http
+              .post(uri, headers: headers, body: requestBody)
               .timeout(const Duration(seconds: 15));
+          break;
+        case 'PATCH':
+          response = await http
+              .patch(uri, headers: headers, body: requestBody)
+              .timeout(const Duration(seconds: 15));
+          break;
+        default:
+          throw ApiException('Unsupported API request method: $method');
+      }
     } catch (error) {
       throw ApiException(
         'Could not reach CurrenSee backend at $baseUrl. Check that it is running and the address is correct. ($error)',
@@ -98,6 +115,49 @@ class ApiClient {
 
   static Future<Map<String, dynamic>> _authedGet(String path) =>
       _authedRequest('GET', path);
+
+  static Future<Map<String, dynamic>> _authedPatch(
+    String path,
+    Map<String, dynamic> body,
+  ) =>
+      _authedRequest('PATCH', path, body: body);
+
+  static Future<Map<String, dynamic>> getCurrentUser() =>
+      _authedGet('/users/me');
+
+  static Future<Map<String, dynamic>> getPreferences() =>
+      _authedGet('/users/preferences');
+
+  static Future<Map<String, dynamic>> updatePreferences(
+    Map<String, dynamic> changes,
+  ) =>
+      _authedPatch('/users/preferences', changes);
+
+  static Future<Map<String, dynamic>> saveConversion({
+    required String fromCode,
+    required String toCode,
+    required String amount,
+    required String rateUsed,
+  }) =>
+      _authedPost('/users/conversions', {
+        'fromCode': fromCode,
+        'toCode': toCode,
+        'amount': amount,
+        'rateUsed': rateUsed,
+      });
+
+  static Future<Map<String, dynamic>> getConversionHistory({
+    int limit = 50,
+    int offset = 0,
+  }) =>
+      _authedRequest(
+        'GET',
+        '/users/conversions',
+        queryParameters: {
+          'limit': '$limit',
+          'offset': '$offset',
+        },
+      );
 
   static Future<void> registerProfile({
     String? name,

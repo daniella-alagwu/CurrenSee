@@ -10,6 +10,7 @@
 - MySQL profile and default preference storage.
 - Firebase ID-token checks on protected backend endpoints.
 - Placeholder home screen with the signed-in email and log-out button.
+- Forgot and reset passport
 
 ## Registration flow
 
