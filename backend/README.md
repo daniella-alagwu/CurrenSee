@@ -32,8 +32,18 @@ The Flutter app creates the Firebase account, calls `POST /api/users/create` wit
 - `POST /api/users/create` — authenticated with a Firebase bearer token; creates or updates the SQL profile and default currency.
 - `POST /api/users/otp/send` — authenticated; sends a 6-digit code that expires after 10 minutes.
 - `POST /api/users/otp/verify` — authenticated; checks the code and marks the Firebase email verified.
+- `GET /api/users/me` — authenticated; returns the signed-in user's stored profile and default currency preferences. Returns `404 PROFILE_NOT_FOUND` until `/api/users/create` has stored the profile.
 
 Firebase Email/Password sign-in must be enabled in Firebase Authentication. OTP delivery will not work until valid SMTP host, port, username, and password values are configured.
+
+## User preferences and conversion history
+
+These endpoints require `Authorization: Bearer <Firebase ID token>`. They only read or modify data belonging to the signed-in user.
+
+- `GET /api/users/preferences` — returns the user's default base/target currencies and notification settings.
+- `PATCH /api/users/preferences` — updates any supplied fields: `defaultBaseCurrency`, `defaultTargetCurrency`, `pushEnabled`, and `alertNotificationsEnabled`.
+- `POST /api/users/conversions` — saves a conversion. JSON body: `{"fromCode":"USD","toCode":"EUR","amount":"25.00","rateUsed":"0.92000000"}`. The server calculates and stores the result. The rate is currently supplied by the app; connect it to the exchange-rate service when that backend is available.
+- `GET /api/users/conversions?limit=50&offset=0` — returns the signed-in user's conversion history, newest first. The maximum page size is 100.
 
 ## Admin access
 
@@ -57,3 +67,16 @@ Admin access uses the Firebase custom claim \`admin: true\`. Do not add an admin
 The backend protects \`GET /api/admin/me\` with both authentication and the admin claim. It confirms that the signed-in user has admin access; it is not yet an admin data-management API. Add each future admin endpoint behind \`requireAuth\` and \`requireAdmin\`.
 
 The simple Admin home is a placeholder for the front-end teammate to expand. Keep the Firebase Admin service-account key and \`.env\` private; the role-grant command runs locally using that key and is not an API exposed to app users.
+## User Profile, Preferences, and Conversion History
+
+The backend provides Firebase-authenticated endpoints for a user’s profile, preferences, and conversion history. Each request uses the signed-in user’s Firebase ID token, and users can access only their own data.
+
+- `GET /api/users/me` — returns the user’s saved email, name, country, and currency preferences.
+- `GET /api/users/preferences` — retrieves the user’s default currencies and preference settings.
+- `PATCH /api/users/preferences` — updates supplied currency or preference settings.
+- `POST /api/users/conversions` — saves a conversion and calculates its result from the submitted amount and rate.
+- `GET /api/users/conversions` — returns the user’s conversion history, newest first, with optional `limit` and `offset` pagination.
+
+Flutter’s `ApiClient` includes methods for calling these endpoints: `getCurrentUser`, `getPreferences`, `updatePreferences`, `saveConversion`, and `getConversionHistory`.
+
+The conversion rate is currently provided by the calling app. The rate service can be connected when it is available. The backend endpoints and Flutter API methods are ready for the frontend screens to use.
