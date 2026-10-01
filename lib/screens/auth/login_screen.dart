@@ -39,6 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final token = await FirebaseAuth.instance.currentUser?.getIdToken();
       debugPrint('POSTMAN_TOKEN=$token');
+
+      // Login was pushed on top of the welcome screen; go back to the root so
+      // AuthGate (now signed in) can show verification / home.
+      if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       if (mounted) showAuthError(context, authErrorMessage(e));
     } finally {

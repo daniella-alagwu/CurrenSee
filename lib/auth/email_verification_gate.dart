@@ -90,7 +90,7 @@ class _EmailVerificationGateState extends State<EmailVerificationGate> {
     }
     if (_verified) {
       return Scaffold(
-        backgroundColor: AppColors.emeraldBg,
+        backgroundColor: AppColors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -100,7 +100,7 @@ class _EmailVerificationGateState extends State<EmailVerificationGate> {
                 Text(
                   _profileSaving ? 'Setting up your account…' : (_profileError ?? 'Setting up your account…'),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.white, fontSize: 16),
+                  style: const TextStyle(color: AppColors.textDark, fontSize: 16),
                 ),
                 if (!_profileSaving) ...[
                   const SizedBox(height: 16),

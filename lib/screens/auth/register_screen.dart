@@ -107,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           currencySymbol: _currencySymbol,
         );
       } on ApiException {
-        // Keep firebase verification while api is down.
+        
       }
 
       if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
