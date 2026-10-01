@@ -37,8 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _password.text,
       );
 
-      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
-      debugPrint('POSTMAN_TOKEN=$token');
+      
+
+
+
     } catch (e) {
       if (mounted) showAuthError(context, authErrorMessage(e));
     } finally {
@@ -84,9 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   (v == null || v.isEmpty) ? 'Enter your password' : null,
               suffix: IconButton(
                 icon: Icon(
-                  _obscure
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
+                  _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                 ),
                 color: AppColors.textMuted,
                 onPressed: () => setState(() => _obscure = !_obscure),
@@ -99,13 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _loading
                     ? () {}
                     : () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ForgotPasswordScreen(
-                            initialEmail: _email.text.trim(),
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ForgotPasswordScreen(
+                              initialEmail: _email.text.trim(),
+                            ),
                           ),
                         ),
-                      ),
               ),
             ),
             const SizedBox(height: 24),
@@ -117,11 +117,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _loading
                     ? () {}
                     : () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RegisterScreen(),
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
                         ),
-                      ),
               ),
             ),
           ],
