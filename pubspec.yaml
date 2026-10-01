@@ -28,7 +28,7 @@ dev_dependencies:
 
 # ---------------------------------------------------------------------------
 # Launcher icons  ->  dart run flutter_launcher_icons
-# adaptive_icon_background = AppColors.emeraldBg (#064E3B), see BRAND.md
+# White icon background (adaptive_icon_background = AppColors.white), see BRAND.md
 # ---------------------------------------------------------------------------
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -36,21 +36,21 @@ flutter_launcher_icons:
   image_path: "assets/icons/app_icon.png"
   remove_alpha_ios: true
   min_sdk_android: 21
-  adaptive_icon_background: "#064E3B"
+  adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
   adaptive_icon_monochrome: "assets/icons/app_icon_monochrome.png"
 
 # ---------------------------------------------------------------------------
 # Native splash  ->  dart run flutter_native_splash:create
-# color = AppColors.emeraldBg (#064E3B), see BRAND.md
+# Plain white on purpose: the animated logo splash is drawn by Flutter in
+# lib/screens/splash_screen.dart, so the native one must not show a logo.
 # ---------------------------------------------------------------------------
 flutter_native_splash:
-  color: "#064E3B"
-  image: assets/brand/logo_mark.png
+  color: "#FFFFFF"
   fullscreen: true
   android_12:
-    color: "#064E3B"
-    image: assets/brand/splash_android12.png
+    color: "#FFFFFF"
+    image: assets/brand/splash_blank.png
 
 flutter:
   uses-material-design: true
@@ -58,3 +58,4 @@ flutter:
   assets:
     - assets/brand/
     - assets/icons/
+    - assets/images/

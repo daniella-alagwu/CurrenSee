@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
-import 'package:currensee/screens/auth/login_screen.dart';
+import 'package:currensee/screens/welcome_screen.dart';
 import 'email_verification_gate.dart';
+
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -13,18 +14,17 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            backgroundColor: AppColors.emeraldBg,
+            backgroundColor: AppColors.white,
             body: Center(
-              child: CircularProgressIndicator(color: AppColors.goldWarm),
+              child: CircularProgressIndicator(color: AppColors.forestGreen),
             ),
           );
         }
- 
+
         final user = snapshot.data;
-        if (user == null) return const LoginScreen();
+        if (user == null) return const WelcomeScreen();
         return EmailVerificationGate(user: user);
       },
     );
   }
 }
- 
