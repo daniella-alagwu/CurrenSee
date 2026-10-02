@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/colors.dart';
 
 class AppTheme {
@@ -21,11 +22,14 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.surfaceSlate,
+      scaffoldBackgroundColor: AppColors.white,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.emeraldBg,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.white,
+        foregroundColor: AppColors.textDark,
+        surfaceTintColor: AppColors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -53,6 +57,19 @@ class AppTheme {
         indicatorColor: AppColors.forestGreen,
         labelColor: AppColors.forestGreen,
         unselectedLabelColor: AppColors.textMuted,
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.white
+              : AppColors.textMuted,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? AppColors.forestGreen
+              : AppColors.borderSlate,
+        ),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       ),
       dividerColor: AppColors.borderSlate,
     );

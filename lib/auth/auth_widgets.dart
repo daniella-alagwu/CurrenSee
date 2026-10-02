@@ -23,72 +23,75 @@ class AuthScaffold extends StatelessWidget {
     final w = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
-      backgroundColor: AppColors.emeraldBg,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(gradient: AppColors.brandBackground),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      AppAssets.logoFullDark,
-                      width: (w * 0.55).clamp(160.0, 260.0),
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 28),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: AppColors.goldPrimary.withValues(alpha: 0.6),
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        AppAssets.logoFull,
+                        width: (w * 0.6).clamp(180.0, 280.0),
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: AppColors.borderSlate),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.textDark.withValues(alpha: 0.06),
+                              blurRadius: 24,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.emeraldBg.withValues(alpha: 0.4),
-                            blurRadius: 24,
-                            offset: const Offset(0, 12),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              color: AppColors.textDark,
-                              fontSize: 26,
-                              fontWeight: FontWeight.w700,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                color: AppColors.textDark,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            subtitle,
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 14,
+                            const SizedBox(height: 6),
+                            Text(
+                              subtitle,
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          child,
-                        ],
+                            const SizedBox(height: 24),
+                            child,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+            if (Navigator.of(context).canPop())
+              const Positioned(
+                left: 4,
+                top: 4,
+                child: BackButton(color: AppColors.textDark),
+              ),
+          ],
         ),
       ),
     );

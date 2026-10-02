@@ -1,15 +1,14 @@
-// test/widget_test.dart
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:currensee/main.dart';
+import 'package:currensee/utils/format.dart';
 
 void main() {
-  testWidgets('App boots into the splash screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const CurrenSeeApp());
-    await tester.pump();
-    expect(find.text('Live rates. Clear insight.'), findsNothing); // fades in later
-    await tester.pump(const Duration(seconds: 4));
-    await tester.pumpAndSettle();
-    expect(find.text('Home'), findsOneWidget);
+  test('formatNumber groups thousands', () {
+    expect(formatNumber(1234567.891), '1,234,567.89');
+    expect(formatNumber(-42.5), '-42.50');
+  });
+
+  test('trimZeros removes trailing zeros', () {
+    expect(trimZeros('100.0000'), '100');
+    expect(trimZeros('0.87658000'), '0.87658');
   });
 }

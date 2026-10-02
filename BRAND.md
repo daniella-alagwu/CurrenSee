@@ -72,20 +72,18 @@ Added because the locked palette has no answer for depth, dark mode, dividers, o
 
 ---
 
-## 6. Logo & Asset Rules
+## 6. Logo & Asset Rules (v1.2: white launch experience)
+
+The app is **white-first**: app icon background, native launch screen, animated splash, welcome/login/sign-up and home all sit on `AppColors.white` (or `surfaceSlate` for dashboard pages). Green is an accent (buttons, icons, links), not a background. `emeraldBg` remains the theme seed colour only.
 
 | Asset | File | Use |
 | :--- | :--- | :--- |
-| Full logo (light) | `assets/brand/logo_full_light.png` | On white / Surface Slate |
-| Full logo (dark) | `assets/brand/logo_full_dark.png` | On Deep Emerald ("Curren" in white, "See" stays gold) |
-| Logo mark | `assets/brand/logo_mark.png` | Splash, headers, empty states |
-| App icon | `assets/icons/app_icon.png` | 1024×1024 iOS/store icon, no alpha |
-| Adaptive foreground / mono | `assets/icons/app_icon_foreground.png`, `app_icon_monochrome.png` | Android adaptive & themed icons |
+| Full logo (horizontal) | `assets/brand/logo_full.png` | App bars, auth screens, welcome screen |
+| Full logo (stacked) | `assets/brand/logo_stacked.png` | Portrait layouts that need a taller logo |
+| Logo mark | `assets/brand/logo_mark.png` | Coin + arrows only |
+| Splash layers | `assets/brand/splash_{coin,arrow_green,arrow_gold,curren,see}.png` | Animated splash (`lib/screens/splash_screen.dart`). The coin and arrow layers share one square canvas centred on the coin. |
+| Blank splash icon | `assets/brand/splash_blank.png` | Transparent Android 12 splash icon so the native splash stays plain white |
+| App icon | `assets/icons/app_icon*.png` | Launcher icons on a white background |
+| Welcome photo | `assets/images/money_lady.jpg` | Greyed-out background on the welcome screen |
 
-Do not recolor, stretch, rotate, or add effects to the mark. Keep clear space equal to the coin's radius around the logo.
-
-## 7. Developer Implementation Rules
-
-1. **No Hardcoded Hex Values:** Never write `Color(0xFF...)` inside widget code. Always reference `AppColors.colorName`. (Only exceptions: tool configs that cannot import Dart — `flutter_native_splash.yaml` and `flutter_launcher_icons.yaml` — which use the hex of `emeraldBg`.)
-2. **Updating the Palette:** Edit `BRAND.md` first, then add the `static const Color` to `lib/constants/colors.dart`, then use it.
-3. **Theme:** all `ThemeData` colors come from `lib/theme/app_theme.dart`, which only reads `AppColors`.
+"Powered by AB Finance" is defined once in `AppBrand.poweredBy` (`lib/constants/assets.dart`).
