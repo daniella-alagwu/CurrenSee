@@ -38,6 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _email.text.trim(),
         password: _password.text,
       );
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } catch (e) {
       if (mounted) {
         showAuthError(context, authErrorMessage(e));
@@ -102,21 +105,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _loading
                     ? () {}
                     : () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ForgotPasswordScreen(
-                              initialEmail: _email.text.trim(),
-                            ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ForgotPasswordScreen(
+                            initialEmail: _email.text.trim(),
                           ),
                         ),
+                      ),
               ),
             ),
             const SizedBox(height: 24),
-            GoldButton(
-              label: 'Log in',
-              isLoading: _loading,
-              onPressed: _login,
-            ),
+            GoldButton(label: 'Log in', isLoading: _loading, onPressed: _login),
             const SizedBox(height: 8),
             Center(
               child: AuthLink(
@@ -124,11 +123,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _loading
                     ? () {}
                     : () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RegisterScreen(),
-                          ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterScreen(),
                         ),
+                      ),
               ),
             ),
           ],
