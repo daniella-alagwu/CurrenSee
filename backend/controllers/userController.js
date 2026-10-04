@@ -41,8 +41,6 @@ export const createUser = async (req, res, next) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // Currency selection comes from the supported-currency picker. Ensure it
-    // exists before writing preferences, which references currencies(code).
     if (req.body.currencyCode) {
       await connection.query(
         `INSERT INTO currencies (code, name, symbol) VALUES (?, ?, ?)
@@ -64,12 +62,13 @@ export const createUser = async (req, res, next) => {
        SELECT id FROM users WHERE firebase_uid = ?`,
       [uid]
     );
+
     await connection.query(
       `UPDATE user_preferences p
        JOIN users u ON u.id = p.user_id
-       SET p.default_base_currency = ?
+       SET p.default_base_currency = ?, p.default_target_currency = ?
        WHERE u.firebase_uid = ? AND ? IS NOT NULL`,
-      [currencyCode, uid, req.body.currencyCode ? currencyCode : null]
+      [currencyCode, currencyCode === "USD" ? "EUR" : "USD", uid, req.body.currencyCode ? currencyCode : null]
     );
     await connection.commit();
     res.status(201).json({ message: "User stored" });

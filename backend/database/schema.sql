@@ -11,9 +11,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- New: backs the email-code alternative to the verification link.
--- One row per user; resending overwrites it (ON DUPLICATE KEY in the
--- controller), so a stale code can never be reused after a fresh send.
+
 CREATE TABLE email_otp_codes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   firebase_uid VARCHAR(255) NOT NULL UNIQUE,
@@ -36,7 +34,8 @@ INSERT INTO currencies (code, name, symbol) VALUES
 ('JPY', 'Japanese Yen', '¥'),
 ('CAD', 'Canadian Dollar', '$'),
 ('AUD', 'Australian Dollar', '$'),
-('INR', 'Indian Rupee', '₹');
+('INR', 'Indian Rupee', '₹'),
+('NGN', 'Nigerian Naira', '₦');
 
 CREATE TABLE user_preferences (
   user_id INT PRIMARY KEY,

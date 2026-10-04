@@ -15,7 +15,6 @@ class ApiClient {
   static Map<String, dynamic>? _pendingSignupProfile;
   static String? _pendingSignupUid;
 
-  
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://10.0.2.2:5000/api',
@@ -34,8 +33,8 @@ class ApiClient {
       'countryCode': countryCode,
       'countryName': countryName,
       'currencyCode': currencyCode,
-      if (currencyName != null) 'currencyName': currencyName,
-      if (currencySymbol != null) 'currencySymbol': currencySymbol,
+      'currencyName': currencyName,
+      'currencySymbol': currencySymbol,
     };
   }
 
@@ -122,6 +121,12 @@ class ApiClient {
   ) =>
       _authedRequest('PATCH', path, body: body);
 
+  static List<Map<String, dynamic>> _items(Map<String, dynamic> d) =>
+      (d['items'] as List<dynamic>? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .toList();
+
+  // User Base Info
   static Future<Map<String, dynamic>> getCurrentUser() =>
       _authedGet('/users/me');
 
@@ -133,6 +138,66 @@ class ApiClient {
   ) =>
       _authedPatch('/users/preferences', changes);
 
+  static Future<void> updateProfile(Map<String, dynamic> changes) async {
+    await _authedPatch('/users/profile', changes);
+  }
+
+  // Support chat (user side)
+  static Future<List<Map<String, dynamic>>> getMessages() async =>
+      _items(await _authedGet('/users/messages'));
+
+  static Future<void> sendMessage(String body) async {
+    await _authedPost('/users/messages', {'body': body});
+  }
+
+  // Support chat (admin side)
+  static Future<List<Map<String, dynamic>>> getAdminThreads() async =>
+      _items(await _authedGet('/admin/messages/threads'));
+
+  static Future<List<Map<String, dynamic>>> getAdminThread(int userId) async =>
+      _items(await _authedGet('/admin/messages/threads/$userId'));
+
+  static Future<void> adminReply(int userId, String body) async {
+    await _authedPost('/admin/messages/threads/$userId', {'body': body});
+  }
+
+  static Future<void> registerDeviceToken(String token, String platform) async {
+    await _authedPost('/users/device-token', {'token': token, 'platform': platform});
+  }
+
+  static Future<void> removeDeviceToken(String token) async {
+    await _authedPost('/users/device-token/remove', {'token': token});
+  }
+
+  static Future<Map<String, dynamic>> getNotifications() =>
+      _authedGet('/users/notifications');
+
+  static Future<void> markNotificationsRead() async {
+    await _authedPost('/users/notifications/read', {});
+  }
+
+  static Future<List<Map<String, dynamic>>> getAlerts() async =>
+      _items(await _authedGet('/users/alerts'));
+
+  static Future<void> createAlert({
+    required String baseCode,
+    required String targetCode,
+    required String threshold,
+    required String direction, // 'ABOVE' | 'BELOW'
+  }) async {
+    await _authedPost('/users/alerts', {
+      'baseCode': baseCode,
+      'targetCode': targetCode,
+      'threshold': threshold,
+      'direction': direction,
+    });
+  }
+
+  static Future<void> deleteAlert(int id) async {
+    await _authedPost('/users/alerts/$id/delete', {});
+  }
+
+  // Conversions
   static Future<Map<String, dynamic>> saveConversion({
     required String fromCode,
     required String toCode,
@@ -159,32 +224,7 @@ class ApiClient {
         },
       );
 
-  static Future<void> registerProfile({
-    String? name,
-    String? countryCode,
-    String? countryName,
-    String? currencyCode,
-    String? currencyName,
-    String? currencySymbol,
-  }) async {
-    final currentUid = FirebaseAuth.instance.currentUser?.uid;
-    final pending = currentUid == _pendingSignupUid
-        ? _pendingSignupProfile
-        : null;
-    final body = <String, dynamic>{...?pending};
-    if (name != null) body['name'] = name;
-    if (countryCode != null) body['countryCode'] = countryCode;
-    if (countryName != null) body['countryName'] = countryName;
-    if (currencyCode != null) body['currencyCode'] = currencyCode;
-    if (currencyName != null) body['currencyName'] = currencyName;
-    if (currencySymbol != null) body['currencySymbol'] = currencySymbol;
-    await _authedPost('/users/create', body);
-    if (currentUid == _pendingSignupUid) {
-      _pendingSignupProfile = null;
-      _pendingSignupUid = null;
-    }
-  }
-
+  // Verification & Admin Identity Endpoints
   static Future<void> sendOtp() async {
     await _authedPost('/users/otp/send', {});
   }
@@ -195,4 +235,31 @@ class ApiClient {
 
   static Future<Map<String, dynamic>> getAdminIdentity() =>
       _authedGet('/admin/me');
+
+  // Authentication Signup Profile
+  static Future<void> registerProfile({
+    String? name,
+    String? countryCode,
+    String? countryName,
+    String? currencyCode,
+    String? currencyName,
+    String? currencySymbol,
+  }) async {
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    final pending = currentUid == _pendingSignupUid ? _pendingSignupProfile : null;
+
+    final body = <String, dynamic>{...?pending};
+    if (name != null) body['name'] = name;
+    if (countryCode != null) body['countryCode'] = countryCode;
+    if (countryName != null) body['countryName'] = countryName;
+    if (currencyCode != null) body['currencyCode'] = currencyCode;
+    if (currencyName != null) body['currencyName'] = currencyName;
+    if (currencySymbol != null) body['currencySymbol'] = currencySymbol;
+
+    await _authedPost('/users/create', body);
+    if (currentUid == _pendingSignupUid) {
+      _pendingSignupProfile = null;
+      _pendingSignupUid = null;
+    }
+  }
 }

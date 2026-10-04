@@ -127,7 +127,7 @@ class _ConversionHistoryScreenState extends State<ConversionHistoryScreen> {
       child: ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         itemCount: _items.length + (_hasMore ? 1 : 0),
-        separatorBuilder: (_, __) => const Divider(height: 1),
+        separatorBuilder: (_, _) => const Divider(height: 1),
         itemBuilder: (context, i) {
           if (i == _items.length) {
             return Padding(

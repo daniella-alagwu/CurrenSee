@@ -37,7 +37,6 @@ Future<void> main() async {
   }
 
   runApp(CurrenSeeApp(startupError: startupError));
-  // Always release the native splash, whatever happened above.
   FlutterNativeSplash.remove();
 }
 

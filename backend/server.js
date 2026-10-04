@@ -3,7 +3,7 @@ import cors from "cors";
 import "./config/env.js";
 import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-
+  import { startRateWatcher } from "./jobs/rateWatcher.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -41,3 +41,9 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+
+ 
+  startRateWatcher();  
+
