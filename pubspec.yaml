@@ -21,6 +21,7 @@ dependencies:
   image_picker: ^1.2.3
   country_picker: ^2.0.28
   firebase_messaging: ^16.7.0
+  google_fonts: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -29,10 +30,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
 
-# ---------------------------------------------------------------------------
-# Launcher icons  ->  dart run flutter_launcher_icons
-# White icon background (adaptive_icon_background = AppColors.white), see BRAND.md
-# ---------------------------------------------------------------------------
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

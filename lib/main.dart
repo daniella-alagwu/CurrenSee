@@ -13,8 +13,7 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: binding);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-  // In release builds a widget that throws renders as an empty box, which
-  // looks like a "blank screen". Show the error text instead.
+ 
   ErrorWidget.builder = (details) => Material(
         color: AppColors.white,
         child: Center(
@@ -37,6 +36,7 @@ Future<void> main() async {
   }
 
   runApp(CurrenSeeApp(startupError: startupError));
+
   FlutterNativeSplash.remove();
 }
 
