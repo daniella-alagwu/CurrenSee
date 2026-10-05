@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import 'auth_widgets.dart';
-import 'package:currensee/screens/home/home_screen.dart';
 import 'package:currensee/screens/admin/admin_home.dart';
+import 'package:currensee/screens/main_shell.dart';
 import '../services/api_client.dart';
 import 'verify_email_screen.dart';
 
@@ -86,7 +86,7 @@ class _EmailVerificationGateState extends State<EmailVerificationGate> {
   @override
   Widget build(BuildContext context) {
     if (_profileReady) {
-      return _isAdmin ? const AdminHome() : const HomeScreen();
+      return _isAdmin ? const AdminHome() : const MainShell();
     }
     if (_verified) {
       return Scaffold(

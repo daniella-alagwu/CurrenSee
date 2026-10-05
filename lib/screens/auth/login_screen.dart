@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/auth/auth_widgets.dart';
-import 'register_screen.dart';
+
 import 'forgot_password_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,22 +32,23 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _loading = true);
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _email.text.trim(),
         password: _password.text,
       );
-
-      final token = await FirebaseAuth.instance.currentUser?.getIdToken();
-      debugPrint('POSTMAN_TOKEN=$token');
-
-      // Login was pushed on top of the welcome screen; go back to the root so
-      // AuthGate (now signed in) can show verification / home.
-      if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } catch (e) {
-      if (mounted) showAuthError(context, authErrorMessage(e));
+      if (mounted) {
+        showAuthError(context, authErrorMessage(e));
+      }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -66,10 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               autofillHints: const [AutofillHints.email],
-              validator: (v) {
-                final value = v?.trim() ?? '';
-                if (value.isEmpty) return 'Enter your email';
-                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+              validator: (value) {
+                final email = value?.trim() ?? '';
+                if (email.isEmpty) return 'Enter your email';
+                if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
                   return 'Enter a valid email';
                 }
                 return null;
@@ -84,8 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.password],
               onSubmitted: (_) => _login(),
-              validator: (v) =>
-                  (v == null || v.isEmpty) ? 'Enter your password' : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Enter your password' : null,
               suffix: IconButton(
                 icon: Icon(
                   _obscure

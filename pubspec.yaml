@@ -18,6 +18,9 @@ dependencies:
   http: ^1.6.0
   countries_utils: ^2.0.0
   currency_picker: ^2.0.22
+  image_picker: ^1.2.3
+  country_picker: ^2.0.28
+  firebase_messaging: ^16.7.0
   google_fonts: ^6.3.2
 
 dev_dependencies:

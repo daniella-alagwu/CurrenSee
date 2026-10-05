@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       await Future.wait([
         for (final asset in AppAssets.splashLayers)
-          precacheImage(AssetImage(asset), context, onError: (_, __) {}),
+          precacheImage(AssetImage(asset), context, onError: (_, _) {}),
       ]).timeout(const Duration(seconds: 3));
     } catch (_) {}
     if (!mounted) return;
@@ -79,8 +79,8 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 500),
-      pageBuilder: (ctx, _, __) => widget.nextBuilder(ctx),
-      transitionsBuilder: (_, anim, __, child) =>
+      pageBuilder: (ctx, _, _) => widget.nextBuilder(ctx),
+      transitionsBuilder: (_, anim, _, child) =>
           FadeTransition(opacity: anim, child: child),
     ));
   }
