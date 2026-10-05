@@ -230,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 22),
                       const Center(
                         child: Text(
-                          'Rates: European Central Bank reference rates, published each working day.',
+                          'Rates: daily reference rates from central banks and official sources.',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: AppColors.textMuted, fontSize: 11.5),
                         ),

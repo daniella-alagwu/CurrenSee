@@ -55,7 +55,7 @@ class AboutScreen extends StatelessWidget {
           block('What you can do',
               'Convert between major world currencies, follow 7-day rate trends, save the conversions you use often and set your own default currency pair.'),
           block('Where the rates come from',
-              'Rates are European Central Bank reference rates, published each working day. They are indicative and may differ from the rate a bank or exchange offers.'),
+              'Rates are daily reference rates from central banks and official sources. They are indicative and may differ from the rate a bank or exchange offers.'),
           block('Your data',
               'Your account is protected with Firebase Authentication. We store your profile, preferences and saved conversions so they follow you across devices.'),
         ],

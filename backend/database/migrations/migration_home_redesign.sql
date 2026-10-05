@@ -15,7 +15,6 @@ CREATE TABLE support_messages (
 );
 
 INSERT IGNORE INTO currencies (code, name, symbol) VALUES
-('NGN', 'Nigerian Naira', '₦'),
 ('CHF', 'Swiss Franc', 'CHF'),
 ('CNY', 'Chinese Yuan', '¥'),
 ('SGD', 'Singapore Dollar', '$'),

@@ -272,21 +272,27 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   Widget _section(String title, List<Widget> children) => Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: AppColors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: AppColors.borderSlate),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    color: AppColors.textDark, fontSize: 16, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 14),
-            ...children,
-          ],
+        child: Material(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        color: AppColors.textDark, fontSize: 16, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 14),
+                ...children,
+              ],
+            ),
+          ),
         ),
       );
 }
