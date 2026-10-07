@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/screens/menu/about_screen.dart';
 import 'package:currensee/screens/menu/contact_screen.dart';
@@ -59,10 +60,34 @@ class AppMenuDrawer extends StatelessWidget {
             const SizedBox(height: 8),
             _item(context, Icons.manage_accounts_outlined, 'Profile settings',
                 const ProfileSettingsScreen()),
-            _item(context, Icons.support_agent_rounded, 'Contact', const ContactScreen()),
             _item(context, Icons.info_outline_rounded, 'About us', const AboutScreen()),
             _item(context, Icons.speed_rounded, 'Transaction limits',
                 const TransactionLimitsScreen()),
+            FutureBuilder<IdTokenResult>(
+              future: FirebaseAuth.instance.currentUser?.getIdTokenResult(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const SizedBox.shrink();
+                }
+                final isAdmin = snapshot.data?.claims?['admin'] == true;
+                if (!isAdmin) {
+                  return _item(context, Icons.support_agent_rounded, 'Contact',
+                      const ContactScreen());
+                }
+                return ListTile(
+                  leading: const Icon(Icons.admin_panel_settings_outlined,
+                      color: AppColors.forestGreen),
+                  title: const Text('Admin dashboard',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  trailing: const Icon(Icons.chevron_right_rounded,
+                      color: AppColors.textMuted),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/admin');
+                  },
+                );
+              },
+            ),
             const Spacer(),
             const Divider(height: 1),
             ListTile(

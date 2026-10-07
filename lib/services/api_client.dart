@@ -161,6 +161,32 @@ class ApiClient {
     await _authedPost('/admin/messages/threads/$userId', {'body': body});
   }
 
+  // Admin: dashboard + user management
+  static Future<Map<String, dynamic>> getAdminStats() =>
+      _authedGet('/admin/stats');
+
+  /// { items: [...], total, limit, offset }
+  static Future<Map<String, dynamic>> getAdminUsers({
+    String query = '',
+    int limit = 30,
+    int offset = 0,
+  }) =>
+      _authedRequest(
+        'GET',
+        '/admin/users',
+        queryParameters: {'q': query, 'limit': '$limit', 'offset': '$offset'},
+      );
+
+  /// { user: {...} }
+  static Future<Map<String, dynamic>> getAdminUser(int id) =>
+      _authedGet('/admin/users/$id');
+
+  /// action: suspend | unsuspend | promote | demote | delete
+  static Future<void> adminUserAction(int id, String action) async {
+    await _authedPost('/admin/users/$id/$action', {});
+  }
+
+  // Push notifications & alerts
   static Future<void> registerDeviceToken(String token, String platform) async {
     await _authedPost('/users/device-token', {'token': token, 'platform': platform});
   }

@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'auth/auth_gate.dart';
+import 'screens/admin/admin_home.dart';
 
 Future<void> main() async {
   final binding = WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,15 @@ class CurrenSeeApp extends StatelessWidget {
       title: 'CurrenSee',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      onGenerateRoute: (settings) {
+        if (settings.name == '/admin') {
+          return MaterialPageRoute<void>(
+            builder: (_) => const AdminHome(),
+            settings: settings,
+          );
+        }
+        return null;
+      },
       home: startupError != null
           ? _StartupErrorScreen(error: startupError!)
           : SplashScreen(nextBuilder: (_) => const AuthGate()),

@@ -107,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           currencySymbol: _currencySymbol,
         );
       } on ApiException {
-        
+        // The profile is created again by EmailVerificationGate after verification.
       }
 
       if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
