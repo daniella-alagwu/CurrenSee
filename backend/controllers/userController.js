@@ -49,13 +49,23 @@ export const createUser = async (req, res, next) => {
       );
     }
     await connection.query(
-      `INSERT INTO users (firebase_uid, email, name, country_code, country_name)
-       VALUES (?, ?, ?, ?, ?)
+      `INSERT INTO users (firebase_uid, email, name, country_code, country_name, role, is_primary_admin)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE email = VALUES(email),
          name = COALESCE(VALUES(name), name),
          country_code = COALESCE(VALUES(country_code), country_code),
-         country_name = COALESCE(VALUES(country_name), country_name)`,
-      [uid, email, name || null, countryCode, countryName]
+         country_name = COALESCE(VALUES(country_name), country_name),
+         role = VALUES(role),
+         is_primary_admin = VALUES(is_primary_admin)`,
+      [
+        uid,
+        email,
+        name || null,
+        countryCode,
+        countryName,
+        req.firebaseUser.admin === true ? "ADMIN" : "USER",
+        req.firebaseUser.admin === true && req.firebaseUser.primaryAdmin === true,
+      ]
     );
     await connection.query(
       `INSERT IGNORE INTO user_preferences (user_id)
