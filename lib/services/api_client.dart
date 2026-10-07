@@ -17,7 +17,7 @@ class ApiClient {
 
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:5000/api',
+    defaultValue: 'https://currensee-f0sf.onrender.com/api',
   );
 
   static void keepPendingSignupProfile({
