@@ -5,16 +5,18 @@ import 'package:currensee/services/notification_store.dart';
 import 'package:currensee/services/user_store.dart';
 import 'user_avatar.dart';
 
-/// Notification bell (with unread badge) + profile avatar that opens the right-side menu.
+/// Notification bell + user profile avatar.
 class HeaderActions extends StatelessWidget {
   const HeaderActions({
     super.key,
-    required this.onOpenMenu,
+    this.onOpenMenu,
+    this.onOpenProfile,
     this.iconColor = AppColors.textDark,
     this.avatarBackground = AppColors.emeraldBg,
   });
 
-  final VoidCallback onOpenMenu;
+  final VoidCallback? onOpenMenu;
+  final VoidCallback? onOpenProfile;
   final Color iconColor;
   final Color avatarBackground;
 
@@ -26,35 +28,50 @@ class HeaderActions extends StatelessWidget {
         ListenableBuilder(
           listenable: NotificationStore.instance,
           builder: (context, _) {
-            final n = NotificationStore.instance.unread;
+            final unread = NotificationStore.instance.unread;
+
             return IconButton(
               tooltip: 'Notifications',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
+                  ),
+                );
+              },
               icon: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Icon(Icons.notifications_none_rounded, color: iconColor, size: 28),
-                  if (n > 0)
+                  Icon(
+                    Icons.notifications_none_rounded,
+                    color: iconColor,
+                    size: 28,
+                  ),
+                  if (unread > 0)
                     Positioned(
                       right: -4,
                       top: -3,
                       child: Container(
-                        constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
                           color: AppColors.goldWarm,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(n > 9 ? '9+' : '$n',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: AppColors.textDark,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                height: 1.5)),
+                        child: Text(
+                          unread > 9 ? '9+' : '$unread',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.textDark,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            height: 1.5,
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -62,19 +79,26 @@ class HeaderActions extends StatelessWidget {
             );
           },
         ),
+
+        // User profile avatar.
         ListenableBuilder(
           listenable: UserStore.instance,
-          builder: (_, _) => GestureDetector(
-            onTap: onOpenMenu,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4, right: 14),
-              child: UserAvatar(
-                avatar: UserStore.instance.avatar,
-                radius: 21,
-                background: avatarBackground,
+          builder: (_, _) {
+            return GestureDetector(
+              onTap: onOpenProfile ?? onOpenMenu,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 4,
+                  right: 14,
+                ),
+                child: UserAvatar(
+                  avatar: UserStore.instance.avatar,
+                  radius: 21,
+                  background: avatarBackground,
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
     );

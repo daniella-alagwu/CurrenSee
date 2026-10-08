@@ -250,6 +250,23 @@ class ApiClient {
         },
       );
 
+
+// Market news
+
+static Future<List<Map<String, dynamic>>> getNews({
+  int limit = 20,
+}) async =>
+    _items(
+      await _authedRequest(
+        'GET',
+        '/users/news',
+        queryParameters: {
+          'limit': '$limit',
+        },
+      ),
+    );
+
+
   // Verification & Admin Identity Endpoints
   static Future<void> sendOtp() async {
     await _authedPost('/users/otp/send', {});
