@@ -9,6 +9,7 @@ import {
   listAlerts, createAlert, deleteAlert,
 } from "../controllers/notificationController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
+import { getNews } from "../controllers/newsController.js";
 
 const router = express.Router();
 
@@ -31,5 +32,7 @@ router.post("/notifications/read", requireAuth, markAllRead);
 router.get("/alerts", requireAuth, listAlerts);
 router.post("/alerts", requireAuth, createAlert);
 router.post("/alerts/:id/delete", requireAuth, deleteAlert);
+
+router.get("/news", requireAuth, getNews);
 
 export default router;
