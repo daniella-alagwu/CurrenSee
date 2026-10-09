@@ -19,7 +19,8 @@ export const getCurrentUser = async (req, res, next) => {
  LEFT JOIN currencies base ON base.code = p.default_base_currency
  LEFT JOIN currencies target ON target.code = p.default_target_currency
  WHERE u.firebase_uid = ?
- LIMIT 1`[req.firebaseUser.uid],
+ LIMIT 1`,
+      [req.firebaseUser.uid],
     );
 
     const row = rows[0];

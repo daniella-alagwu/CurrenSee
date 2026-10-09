@@ -60,7 +60,7 @@ export const sendMyMessage = async (req, res, next) => {
 
   try {
     const [users] = await db.query(
-      "SELECT id FROM users WHERE firebase_uid = ?",
+      "SELECT id, status FROM users WHERE firebase_uid = ?",
       [req.firebaseUser.uid],
     );
 
@@ -73,10 +73,14 @@ export const sendMyMessage = async (req, res, next) => {
       );
     }
 
+    // Anything a suspended user writes is treated as an appeal.
+    const tag =
+      String(users[0].status).toUpperCase() === "SUSPENDED" ? APPEAL_TAG : null;
+
     const [insert] = await db.query(
-      `INSERT INTO support_messages (user_id, sender, body)
-       VALUES (?, 'USER', ?)`,
-      [users[0].id, body],
+      `INSERT INTO support_messages (user_id, sender, body, tag)
+       VALUES (?, 'USER', ?, ?)`,
+      [users[0].id, body, tag],
     );
 
     res.status(201).json({ id: insert.insertId });
@@ -150,7 +154,7 @@ export const submitSuspensionAppeal = async (req, res, next) => {
 export const listThreads = async (_req, res, next) => {
   try {
     const [rows] = await db.query(
-      `SELECT u.id AS userId, u.name, u.email,
+      `SELECT u.id AS userId, u.name, u.email, u.status AS userStatus,
               (
                 SELECT m2.body
                 FROM support_messages m2
@@ -172,7 +176,7 @@ export const listThreads = async (_req, res, next) => {
               ) AS unread
        FROM support_messages m
        JOIN users u ON u.id = m.user_id
-       GROUP BY u.id, u.name, u.email
+       GROUP BY u.id, u.name, u.email, u.status
        ORDER BY lastAt DESC`,
     );
 

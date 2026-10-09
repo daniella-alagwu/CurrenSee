@@ -1,16 +1,26 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiException implements Exception {
-  ApiException(this.message);
+  ApiException(this.message, {this.code, this.statusCode});
   final String message;
+  final String? code;
+  final int? statusCode;
+
+  bool get isSuspended => code == 'ACCOUNT_SUSPENDED';
   @override
   String toString() => message;
 }
 
 class ApiClient {
   ApiClient._();
+
+  /// Holds the Firebase uid of a user the backend reported as suspended
+  /// (HTTP 403 ACCOUNT_SUSPENDED). AuthGate listens to this and shows the
+  /// suspended page instead of the app. Set back to null when reactivated.
+  static final ValueNotifier<String?> suspendedUid = ValueNotifier<String?>(null);
 
   static Map<String, dynamic>? _pendingSignupProfile;
   static String? _pendingSignupUid;
@@ -101,7 +111,11 @@ class ApiClient {
       final message = error is Map<String, dynamic>
           ? error['message'] ?? 'Something went wrong.'
           : 'Something went wrong.';
-      throw ApiException(message);
+      final code = error is Map<String, dynamic> ? error['code'] as String? : null;
+      if (code == 'ACCOUNT_SUSPENDED') {
+        suspendedUid.value = user.uid;
+      }
+      throw ApiException('$message', code: code, statusCode: response.statusCode);
     }
     return decoded;
   }
@@ -148,6 +162,20 @@ class ApiClient {
 
   static Future<void> sendMessage(String body) async {
     await _authedPost('/users/messages', {'body': body});
+  }
+
+  /// Suspended users: sends an appeal. The server tags it ACCOUNT_SUSPENSION_APPEAL
+  /// so it shows up in the admin's support inbox as an appeal.
+  static Future<void> submitSuspensionAppeal(String body) async {
+    await _authedPost('/users/suspension-appeal', {'body': body});
+  }
+
+  /// 'ACTIVE' or 'SUSPENDED'. /users/me is not blocked for suspended accounts.
+  static Future<String> getMyStatus() async {
+    final data = await getCurrentUser();
+    final user = data['user'];
+    final status = user is Map<String, dynamic> ? user['status'] : null;
+    return '${status ?? 'ACTIVE'}'.toUpperCase();
   }
 
   // Support chat (admin side)

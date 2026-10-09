@@ -267,6 +267,8 @@ String authErrorMessage(Object error) {
         return 'An account with this email already exists. Try logging in.';
       case 'weak-password':
         return 'Password is too weak. Use at least 6 characters.';
+      case 'user-disabled':
+        return 'This account has been suspended. Please contact CurrenSee support to appeal.';
       case 'network-request-failed':
         return 'No connection. Check your internet and try again.';
       case 'too-many-requests':
