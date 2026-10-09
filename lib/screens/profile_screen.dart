@@ -4,18 +4,32 @@ import 'package:currensee/auth/auth_widgets.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/rates_service.dart';
 import 'package:currensee/services/user_store.dart';
-import 'package:currensee/screens/home/widgets/header_actions.dart';
 import 'package:currensee/screens/home/widgets/user_avatar.dart';
 import 'menu/profile_settings_screen.dart';
 
-/// Read-only view of the account. Editing lives in Profile settings (right-side menu).
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.onOpenMenu});
+
   final VoidCallback onOpenMenu;
 
   String _date(DateTime? d) {
     if (d == null) return '—';
-    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const m = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
     return '${m[d.month - 1]} ${d.day}, ${d.year}';
   }
 
@@ -23,11 +37,23 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = UserStore.instance;
     final fbUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: AppColors.surfaceSlate,
       appBar: AppBar(
-        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.w800)),
-        actions: [HeaderActions(onOpenMenu: onOpenMenu)],
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.textDark,
+            ),
+          ),
+        ],
       ),
       body: ListenableBuilder(
         listenable: store,
@@ -35,6 +61,7 @@ class ProfileScreen extends StatelessWidget {
           final code = RatesService.startingBase(store.baseCurrency);
           final info = RatesService.info(code);
           final verified = fbUser?.emailVerified ?? false;
+
           return RefreshIndicator(
             color: AppColors.forestGreen,
             onRefresh: () => store.load(force: true),
@@ -43,28 +70,49 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 24,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     gradient: AppColors.brandBackground,
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Column(
                     children: [
-                      UserAvatar(avatar: store.avatar, radius: 46),
+                      UserAvatar(
+                        avatar: store.avatar,
+                        radius: 46,
+                      ),
                       const SizedBox(height: 12),
-                      Text(store.displayName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: AppColors.white, fontSize: 22, fontWeight: FontWeight.w800)),
+                      Text(
+                        store.displayName,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                       const SizedBox(height: 2),
-                      Text(store.email,
-                          style: const TextStyle(color: Colors.white70, fontSize: 14)),
+                      Text(
+                        store.email,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 if (store.error != null && !store.loaded) ...[
                   const SizedBox(height: 12),
-                  Text(store.error!, style: const TextStyle(color: AppColors.negativeRed)),
+                  Text(
+                    store.error!,
+                    style: const TextStyle(
+                      color: AppColors.negativeRed,
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 16),
                 Container(
@@ -75,21 +123,43 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      _row(Icons.person_outline_rounded, 'Name', store.displayName),
+                      _row(
+                        Icons.person_outline_rounded,
+                        'Name',
+                        store.displayName,
+                      ),
                       const Divider(height: 1),
-                      _row(Icons.mail_outline_rounded, 'Email', store.email),
+                      _row(
+                        Icons.mail_outline_rounded,
+                        'Email',
+                        store.email,
+                      ),
                       const Divider(height: 1),
-                      _row(Icons.public_rounded, 'Country',
-                          (store.countryName?.isNotEmpty ?? false) ? store.countryName! : '—'),
+                      _row(
+                        Icons.public_rounded,
+                        'Country',
+                        (store.countryName?.isNotEmpty ?? false)
+                            ? store.countryName!
+                            : '—',
+                      ),
                       const Divider(height: 1),
-                      _row(Icons.attach_money_rounded, 'Home currency',
-                          '${info.flag}  $code · ${info.name}'),
+                      _row(
+                        Icons.attach_money_rounded,
+                        'Home currency',
+                        '${info.flag}  $code · ${info.name}',
+                      ),
                       const Divider(height: 1),
-                      _row(Icons.verified_outlined, 'Email status',
-                          verified ? 'Verified' : 'Not verified'),
+                      _row(
+                        Icons.verified_outlined,
+                        'Email status',
+                        verified ? 'Verified' : 'Not verified',
+                      ),
                       const Divider(height: 1),
-                      _row(Icons.event_outlined, 'Member since',
-                          _date(fbUser?.metadata.creationTime)),
+                      _row(
+                        Icons.event_outlined,
+                        'Member since',
+                        _date(fbUser?.metadata.creationTime),
+                      ),
                     ],
                   ),
                 ),
@@ -98,7 +168,9 @@ class ProfileScreen extends StatelessWidget {
                   label: 'Edit profile',
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const ProfileSettingsScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const ProfileSettingsScreen(),
+                    ),
                   ),
                 ),
               ],
@@ -110,20 +182,34 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _row(IconData icon, String label, String value) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.forestGreen, size: 22),
+            Icon(
+              icon,
+              color: AppColors.forestGreen,
+              size: 22,
+            ),
             const SizedBox(width: 12),
-            Text(label, style: const TextStyle(color: AppColors.textMuted)),
+            Text(
+              label,
+              style: const TextStyle(color: AppColors.textMuted),
+            ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(value,
-                  textAlign: TextAlign.right,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      color: AppColors.textDark, fontWeight: FontWeight.w700)),
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.textDark,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ],
         ),
