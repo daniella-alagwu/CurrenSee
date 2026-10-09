@@ -91,12 +91,14 @@ class _MainShellState extends State<MainShell> {
           ),
 
           RatesScreen(
-            onOpenMenu: _openMenu,
-          ),
+  onOpenMenu: _openMenu,
+  onOpenProfile: () => _go(3),
+),
 
-          ConvertScreen(
-            onOpenMenu: _openMenu,
-          ),
+ConvertScreen(
+  onOpenMenu: _openMenu,
+  onOpenProfile: () => _go(3),
+),
 
           ProfileScreen(
             onOpenMenu: _openMenu,
