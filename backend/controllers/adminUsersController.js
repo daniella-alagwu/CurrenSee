@@ -30,7 +30,7 @@ export const listUsers = async (req, res, next) => {
   const where = q ? "WHERE u.name LIKE ? OR u.email LIKE ?" : "";
   const params = q ? [like, like] : [];
   try {
-    // avatar is left out on purpose: it is large and only needed on the detail screen
+    
     const [items] = await db.query(
       `SELECT u.id, u.name, u.email, u.country_name AS countryName, u.role,
               u.is_primary_admin AS primaryAdmin, u.status, u.created_at AS createdAt
@@ -72,7 +72,7 @@ export const getUser = async (req, res, next) => {
       emailVerified = fb.emailVerified;
       lastSignIn = fb.metadata.lastSignInTime ? new Date(fb.metadata.lastSignInTime).toISOString() : null;
     } catch {
-      /* Firebase record missing: leave unknown */
+      
     }
 
     const { firebaseUid, ...user } = row;
@@ -141,7 +141,7 @@ export const userAction = async (req, res, next) => {
 
     switch (action) {
       case "suspend":
-        // Ensure Firebase sign-in is available before recording suspension.
+        
         await ignoreMissing(auth.updateUser(target.uid, { disabled: false }));
         await db.query("UPDATE users SET status = 'SUSPENDED' WHERE id = ?", [
           id,

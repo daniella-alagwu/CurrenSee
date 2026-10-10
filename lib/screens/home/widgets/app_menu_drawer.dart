@@ -8,7 +8,7 @@ import 'package:currensee/screens/menu/transaction_limits_screen.dart';
 import 'package:currensee/services/user_store.dart';
 import 'user_avatar.dart';
 
-/// Slides in from the right (used as Scaffold.endDrawer).
+
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
 

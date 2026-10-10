@@ -14,7 +14,7 @@ function cleanBody(raw) {
   return body && body.length <= MAX_LEN ? body : null;
 }
 
-/* ---------- user side ---------- */
+// user side
 
 export const getMyMessages = async (req, res, next) => {
   const uid = req.firebaseUser.uid;
@@ -89,10 +89,7 @@ export const sendMyMessage = async (req, res, next) => {
   }
 };
 
-/**
- * Dedicated endpoint for suspended users to appeal.
- * The server assigns the tag; clients cannot choose arbitrary tags.
- */
+
 export const submitSuspensionAppeal = async (req, res, next) => {
   const body = cleanBody(req.body?.body);
 

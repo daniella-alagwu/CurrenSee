@@ -17,9 +17,6 @@ class ApiException implements Exception {
 class ApiClient {
   ApiClient._();
 
-  /// Holds the Firebase uid of a user the backend reported as suspended
-  /// (HTTP 403 ACCOUNT_SUSPENDED). AuthGate listens to this and shows the
-  /// suspended page instead of the app. Set back to null when reactivated.
   static final ValueNotifier<String?> suspendedUid = ValueNotifier<String?>(null);
 
   static Map<String, dynamic>? _pendingSignupProfile;
@@ -193,7 +190,7 @@ class ApiClient {
   static Future<Map<String, dynamic>> getAdminStats() =>
       _authedGet('/admin/stats');
 
-  /// { items: [...], total, limit, offset }
+
   static Future<Map<String, dynamic>> getAdminUsers({
     String query = '',
     int limit = 30,
@@ -205,7 +202,7 @@ class ApiClient {
         queryParameters: {'q': query, 'limit': '$limit', 'offset': '$offset'},
       );
 
-  /// { user: {...} }
+ 
   static Future<Map<String, dynamic>> getAdminUser(int id) =>
       _authedGet('/admin/users/$id');
 

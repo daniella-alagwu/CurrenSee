@@ -26,8 +26,7 @@ class AuthGate extends StatelessWidget {
         final user = snapshot.data;
         if (user == null) return const WelcomeScreen();
 
-        // The backend answers 403 ACCOUNT_SUSPENDED for suspended users;
-        // ApiClient records it here so we can show the suspended page.
+        
         return ValueListenableBuilder<String?>(
           valueListenable: ApiClient.suspendedUid,
           builder: (context, suspendedUid, _) {
