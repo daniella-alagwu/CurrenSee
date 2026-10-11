@@ -18,5 +18,5 @@ class AppAssets {
   static const String moneyLady = 'assets/images/money_lady.jpg';
 }
 class AppBrand {AppBrand._();
-static const String poweredBy = 'AB Finance';
+static const String poweredBy = 'ABC Finance';
 }

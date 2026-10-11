@@ -86,4 +86,4 @@ The app is **white-first**: app icon background, native launch screen, animated 
 | App icon | `assets/icons/app_icon*.png` | Launcher icons on a white background |
 | Welcome photo | `assets/images/money_lady.jpg` | Greyed-out background on the welcome screen |
 
-"Powered by AB Finance" is defined once in `AppBrand.poweredBy` (`lib/constants/assets.dart`).
+"Powered by ABC Finance" is defined once in `AppBrand.poweredBy` (`lib/constants/assets.dart`).
