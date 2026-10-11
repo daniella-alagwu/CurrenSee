@@ -103,12 +103,12 @@ export const updateProfile = async (req, res, next) => {
   if (Object.hasOwn(body, "avatar")) {
     const avatar = body.avatar;
 
-    // Allow null to remove the existing avatar.
+    
     if (avatar === null) {
       sets.push("avatar = ?");
       values.push(null);
     } else {
-      // Continue validating uploaded images as before.
+      
       if (typeof avatar !== "string" || !avatar.startsWith("data:image/")) {
         return bad(res, "INVALID_AVATAR", "Upload a valid image.");
       }
@@ -183,8 +183,7 @@ export const updateProfile = async (req, res, next) => {
         [users[0].id],
       );
 
-      // New base currency; if it collides with the target,
-      // move the target to USD (or EUR).
+      
       await connection.query(
         `UPDATE user_preferences
          SET default_base_currency = ?,

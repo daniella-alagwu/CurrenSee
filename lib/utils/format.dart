@@ -1,4 +1,3 @@
-/// 1234567.891 -> "1,234,567.89"
 String formatNumber(double value, {int decimals = 2}) {
   final fixed = value.abs().toStringAsFixed(decimals);
   final parts = fixed.split('.');
@@ -13,10 +12,10 @@ String formatNumber(double value, {int decimals = 2}) {
   return '$sign$buffer$fraction';
 }
 
-/// JPY has no minor unit; everything else in the supported list uses 2.
+
 int decimalsFor(String currencyCode) => currencyCode == 'JPY' ? 0 : 2;
 
-/// "100.0000" -> "100", "0.87658000" -> "0.87658"
+
 String trimZeros(String value) {
   if (!value.contains('.')) return value;
   var out = value.replaceFirst(RegExp(r'0+$'), '');
@@ -31,7 +30,7 @@ const _months = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
-/// "28 Sep, 14:05"
+
 String shortDateTime(DateTime d) {
   final hh = d.hour.toString().padLeft(2, '0');
   final mm = d.minute.toString().padLeft(2, '0');

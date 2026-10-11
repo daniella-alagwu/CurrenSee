@@ -1,9 +1,3 @@
-// One-time fix: accounts suspended by the old code were also "disabled" inside
-// Firebase, so Firebase blocks their sign-in with "This user account has been
-// disabled by an administrator" and they never reach the suspended page.
-// Suspension now lives only in MySQL (users.status), so re-enable them in Firebase.
-//
-// Run once from the backend folder:  node scripts/reenableSuspendedUsers.js
 import admin from "../config/firebaseAdmin.js";
 import db from "../config/db.js";
 

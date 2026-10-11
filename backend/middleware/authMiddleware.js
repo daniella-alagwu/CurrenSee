@@ -27,7 +27,7 @@ export const requireAuth = async (req, res, next) => {
   }
 };
 
-//blocking suspended users from accessing the app
+
 export const requireActiveAccount = async (req, res, next) => {
   try {
     const [rows] = await db.query(
@@ -35,7 +35,7 @@ export const requireActiveAccount = async (req, res, next) => {
       [req.firebaseUser.uid],
     );
 
-    // Allow profile creation if this Firebase user has no MySQL profile.
+    
     if (!rows.length) {
       return next();
     }
