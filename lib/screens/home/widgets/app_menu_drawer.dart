@@ -19,7 +19,7 @@ class AppMenuDrawer extends StatelessWidget {
       trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
       onTap: () {
         final nav = Navigator.of(context);
-        nav.pop(); // close the drawer
+        nav.pop();
         nav.push(MaterialPageRoute(builder: (_) => screen));
       },
     );

@@ -159,8 +159,6 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            // Words sit *under* the mark so they emerge from
-                            // behind the coin.
                             _word(AppAssets.splashCurren, _curren, _currenOut.value),
                             _word(AppAssets.splashSee, _see, _seeOut.value),
                             Positioned(

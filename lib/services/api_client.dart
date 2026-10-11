@@ -202,7 +202,7 @@ class ApiClient {
         queryParameters: {'q': query, 'limit': '$limit', 'offset': '$offset'},
       );
 
- 
+
   static Future<Map<String, dynamic>> getAdminUser(int id) =>
       _authedGet('/admin/users/$id');
 

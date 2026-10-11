@@ -19,18 +19,15 @@ class CurrencyInfo {
 class RateSnapshot {
   const RateSnapshot({required this.base, required this.date, required this.rates});
   final String base;
-  final String date; // YYYY-MM-DD, the rate's publication day
+  final String date;  
   final Map<String, double> rates;
 }
-
-/// Daily reference rates from Frankfurter's blended official-source feed.
 class RatesService {
   RatesService._();
 
   static const String _base = 'https://api.frankfurter.dev/v2';
 
-  /// Must match the active rows in the backend `currencies` table
-  /// (run sql/migration_home_redesign.sql to add the new ones).
+
   static const Map<String, CurrencyInfo> _info = {
     'USD': CurrencyInfo('USD', 'United States Dollar', r'$', '🇺🇸'),
     'EUR': CurrencyInfo('EUR', 'Euro', '€', '🇪🇺'),
@@ -60,11 +57,10 @@ class RatesService {
   static CurrencyInfo info(String code) =>
       _info[code] ?? CurrencyInfo(code, code, code, '🏳️');
 
-  /// The user's registration currency if we have rates for it, otherwise USD.
   static String startingBase(String? userCurrency) =>
       (userCurrency != null && isSupported(userCurrency)) ? userCurrency : 'USD';
 
-  /// Quick-convert target: the saved one, else USD (EUR when the base is already USD).
+  
   static String defaultTarget(String from, String? preferred) {
     if (preferred != null && preferred != from && isSupported(preferred)) return preferred;
     return from == 'USD' ? 'EUR' : 'USD';
@@ -94,7 +90,7 @@ class RatesService {
     );
   }
 
-  /// Daily closing rates for the last [days] working days, oldest first.
+
   static Future<List<double>> trend(String base, String target, {int days = 7}) async {
     if (base == target) return const [];
     final start = DateTime.now().toUtc().subtract(Duration(days: days + 6));
