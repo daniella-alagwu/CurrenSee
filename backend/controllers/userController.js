@@ -11,9 +11,20 @@ function hashCode(code) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
+//account creation & email verification
+const providerOf = (token) =>
+  String(token.firebase?.sign_in_provider || "password").slice(0, 30);
+
 export const createUser = async (req, res, next) => {
   const { uid, email } = req.firebaseUser;
-  const { name } = req.body;
+  const rawName = req.body.name || req.firebaseUser.name || null;
+  const name =
+    typeof rawName === "string" ? rawName.trim().slice(0, 100) || null : null;
+  const photoUrl =
+    typeof req.firebaseUser.picture === "string"
+      ? req.firebaseUser.picture.slice(0, 1024)
+      : null;
+  const authProvider = providerOf(req.firebaseUser);
   const countryCode = req.body.countryCode?.toUpperCase() || null;
   const countryName = req.body.countryName?.trim() || null;
   const currencyCode = req.body.currencyCode?.toUpperCase() || "USD";
@@ -22,7 +33,10 @@ export const createUser = async (req, res, next) => {
 
   if (!email) {
     return res.status(400).json({
-      error: { code: "EMAIL_REQUIRED", message: "The signed-in account has no email address." },
+      error: {
+        code: "EMAIL_REQUIRED",
+        message: "The signed-in account has no email address.",
+      },
     });
   }
   if (countryCode && !/^[A-Z]{2}$/.test(countryCode)) {
@@ -45,16 +59,17 @@ export const createUser = async (req, res, next) => {
       await connection.query(
         `INSERT INTO currencies (code, name, symbol) VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE name = VALUES(name), symbol = VALUES(symbol)`,
-        [currencyCode, currencyName, currencySymbol]
+        [currencyCode, currencyName, currencySymbol],
       );
     }
     await connection.query(
-      `INSERT INTO users (firebase_uid, email, name, country_code, country_name, role, is_primary_admin)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO users (firebase_uid, email, name, country_code, country_name, role, is_primary_admin, auth_provider, photo_url)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE email = VALUES(email),
-         name = COALESCE(VALUES(name), name),
+         name = COALESCE(name, VALUES(name)),
          country_code = COALESCE(VALUES(country_code), country_code),
          country_name = COALESCE(VALUES(country_name), country_name),
+         photo_url = COALESCE(VALUES(photo_url), photo_url),
          role = VALUES(role),
          is_primary_admin = VALUES(is_primary_admin)`,
       [
@@ -64,13 +79,16 @@ export const createUser = async (req, res, next) => {
         countryCode,
         countryName,
         req.firebaseUser.admin === true ? "ADMIN" : "USER",
-        req.firebaseUser.admin === true && req.firebaseUser.primaryAdmin === true,
-      ]
+        req.firebaseUser.admin === true &&
+          req.firebaseUser.primaryAdmin === true,
+        authProvider,
+        photoUrl,
+      ],
     );
     await connection.query(
       `INSERT IGNORE INTO user_preferences (user_id)
        SELECT id FROM users WHERE firebase_uid = ?`,
-      [uid]
+      [uid],
     );
 
     await connection.query(
@@ -78,7 +96,12 @@ export const createUser = async (req, res, next) => {
        JOIN users u ON u.id = p.user_id
        SET p.default_base_currency = ?, p.default_target_currency = ?
        WHERE u.firebase_uid = ? AND ? IS NOT NULL`,
-      [currencyCode, currencyCode === "USD" ? "EUR" : "USD", uid, req.body.currencyCode ? currencyCode : null]
+      [
+        currencyCode,
+        currencyCode === "USD" ? "EUR" : "USD",
+        uid,
+        req.body.currencyCode ? currencyCode : null,
+      ],
     );
     await connection.commit();
     res.status(201).json({ message: "User stored" });
@@ -90,14 +113,13 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-
 export const sendOtp = async (req, res, next) => {
   const { uid, email } = req.firebaseUser;
 
   try {
     const [previous] = await db.query(
       "SELECT created_at FROM email_otp_codes WHERE firebase_uid = ?",
-      [uid]
+      [uid],
     );
     if (previous[0]) {
       const secondsSinceLastSend =
@@ -123,7 +145,7 @@ export const sendOtp = async (req, res, next) => {
                                expires_at = VALUES(expires_at),
                                attempts = 0,
                                created_at = CURRENT_TIMESTAMP`,
-      [uid, codeHash, expiresAt]
+      [uid, codeHash, expiresAt],
     );
 
     await sendOtpEmail(email, code);
@@ -133,7 +155,6 @@ export const sendOtp = async (req, res, next) => {
   }
 };
 
-
 export const verifyOtp = async (req, res, next) => {
   const { uid } = req.firebaseUser;
   const { code } = req.body;
@@ -141,29 +162,39 @@ export const verifyOtp = async (req, res, next) => {
   if (typeof code !== "string" || !/^\d{6}$/.test(code)) {
     return res
       .status(400)
-      .json({ error: { code: "INVALID_CODE", message: "Enter the 6-digit code." } });
+      .json({
+        error: { code: "INVALID_CODE", message: "Enter the 6-digit code." },
+      });
   }
 
   try {
     const [rows] = await db.query(
       "SELECT code_hash, expires_at, attempts FROM email_otp_codes WHERE firebase_uid = ?",
-      [uid]
+      [uid],
     );
     const record = rows[0];
 
     if (!record) {
       return res
         .status(400)
-        .json({ error: { code: "NO_CODE", message: "Request a new code first." } });
+        .json({
+          error: { code: "NO_CODE", message: "Request a new code first." },
+        });
     }
     if (new Date(record.expires_at) < new Date()) {
       return res.status(400).json({
-        error: { code: "EXPIRED", message: "That code expired. Request a new one." },
+        error: {
+          code: "EXPIRED",
+          message: "That code expired. Request a new one.",
+        },
       });
     }
     if (record.attempts >= MAX_ATTEMPTS) {
       return res.status(429).json({
-        error: { code: "TOO_MANY_ATTEMPTS", message: "Too many attempts. Request a new code." },
+        error: {
+          code: "TOO_MANY_ATTEMPTS",
+          message: "Too many attempts. Request a new code.",
+        },
       });
     }
 
@@ -175,11 +206,13 @@ export const verifyOtp = async (req, res, next) => {
     ) {
       await db.query(
         "UPDATE email_otp_codes SET attempts = attempts + 1 WHERE firebase_uid = ?",
-        [uid]
+        [uid],
       );
       return res
         .status(400)
-        .json({ error: { code: "WRONG_CODE", message: "That code is incorrect." } });
+        .json({
+          error: { code: "WRONG_CODE", message: "That code is incorrect." },
+        });
     }
 
     await admin.auth().updateUser(uid, { emailVerified: true });
@@ -189,4 +222,40 @@ export const verifyOtp = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+// sign in restoration for suspended users
+const restoreAttempts = new Map(); 
+
+export const restoreSignIn = async (req, res) => {
+  const email =
+    typeof req.body?.email === "string"
+      ? req.body.email.trim().toLowerCase()
+      : "";
+
+  try {
+    if (email && email.length <= 255) {
+      const now = Date.now();
+      const entry = restoreAttempts.get(email);
+      if (!entry || entry.resetAt < now) {
+        restoreAttempts.set(email, { count: 1, resetAt: now + 60_000 });
+      } else if (++entry.count > 5) {
+        return res.json({ ok: true });
+      }
+      if (restoreAttempts.size > 1000) restoreAttempts.clear();
+
+      const [rows] = await db.query(
+        "SELECT firebase_uid AS uid FROM users WHERE email = ? AND status = 'SUSPENDED' LIMIT 1",
+        [email],
+      );
+      if (rows[0]) {
+        const fb = await admin.auth().getUser(rows[0].uid);
+        if (fb.disabled)
+          await admin.auth().updateUser(rows[0].uid, { disabled: false });
+      }
+    }
+  } catch (err) {
+    console.error("restoreSignIn failed:", err.message);
+  }
+  res.json({ ok: true });
 };
