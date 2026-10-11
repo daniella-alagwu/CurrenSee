@@ -25,6 +25,7 @@ async function sendPush(tokens, { title, body, type }) {
   }
 }
 
+
 export async function notifyUser(userId, { title, body, type = "SYSTEM" }) {
   const t = String(title).slice(0, 150);
   const b = String(body).slice(0, 500);

@@ -1,4 +1,3 @@
-
 String formatNumber(double value, {int decimals = 2}) {
   final fixed = value.abs().toStringAsFixed(decimals);
   final parts = fixed.split('.');
@@ -13,7 +12,9 @@ String formatNumber(double value, {int decimals = 2}) {
   return '$sign$buffer$fraction';
 }
 
+
 int decimalsFor(String currencyCode) => currencyCode == 'JPY' ? 0 : 2;
+
 
 String trimZeros(String value) {
   if (!value.contains('.')) return value;

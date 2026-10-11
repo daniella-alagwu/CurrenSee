@@ -30,7 +30,7 @@ export const listUsers = async (req, res, next) => {
   const where = q ? "WHERE u.name LIKE ? OR u.email LIKE ?" : "";
   const params = q ? [like, like] : [];
   try {
-    // avatar is left out on purpose: it is large and only needed on the detail screen
+    
     const [items] = await db.query(
       `SELECT u.id, u.name, u.email, u.country_name AS countryName, u.role,
               u.is_primary_admin AS primaryAdmin, u.status, u.created_at AS createdAt
@@ -72,7 +72,7 @@ export const getUser = async (req, res, next) => {
       emailVerified = fb.emailVerified;
       lastSignIn = fb.metadata.lastSignInTime ? new Date(fb.metadata.lastSignInTime).toISOString() : null;
     } catch {
-      /* Firebase record missing: leave unknown */
+      
     }
 
     const { firebaseUid, ...user } = row;
@@ -141,10 +141,15 @@ export const userAction = async (req, res, next) => {
 
     switch (action) {
       case "suspend":
-        await ignoreMissing(auth.updateUser(target.uid, { disabled: true }));
-        await ignoreMissing(auth.revokeRefreshTokens(target.uid)); // ends their sessions
-        await db.query("UPDATE users SET status = 'SUSPENDED' WHERE id = ?", [id]);
-        return res.json({ message: "Account suspended" });
+        
+        await ignoreMissing(auth.updateUser(target.uid, { disabled: false }));
+        await db.query("UPDATE users SET status = 'SUSPENDED' WHERE id = ?", [
+          id,
+        ]);
+        return res.json({
+          message:
+            "Account suspended. The user can sign in to submit an appeal.",
+        });
 
       case "unsuspend":
         await ignoreMissing(auth.updateUser(target.uid, { disabled: false }));
@@ -152,24 +157,52 @@ export const userAction = async (req, res, next) => {
         return res.json({ message: "Account reactivated" });
 
       case "promote": {
-        if (target.status !== "ACTIVE") return bad(res, "SUSPENDED", "Reactivate this account before promoting it.");
-        if (!firebaseTarget) return bad(res, "FIREBASE_USER_NOT_FOUND", "Firebase account not found.", 404);
-        if (!firebaseTarget.emailVerified) return bad(res, "EMAIL_NOT_VERIFIED", "Only verified accounts can be promoted.");
+        if (target.status !== "ACTIVE")
+          return bad(
+            res,
+            "SUSPENDED",
+            "Reactivate this account before promoting it.",
+          );
+        if (!firebaseTarget)
+          return bad(
+            res,
+            "FIREBASE_USER_NOT_FOUND",
+            "Firebase account not found.",
+            404,
+          );
+        if (!firebaseTarget.emailVerified)
+          return bad(
+            res,
+            "EMAIL_NOT_VERIFIED",
+            "Only verified accounts can be promoted.",
+          );
         const claims = { ...(firebaseTarget.customClaims ?? {}), admin: true };
         delete claims.primaryAdmin;
         await auth.setCustomUserClaims(target.uid, claims);
-        await db.query("UPDATE users SET role = 'ADMIN', is_primary_admin = FALSE WHERE id = ?", [id]);
+        await db.query(
+          "UPDATE users SET role = 'ADMIN', is_primary_admin = FALSE WHERE id = ?",
+          [id],
+        );
         return res.json({ message: "Account promoted to admin" });
       }
 
       case "demote": {
-        if (!firebaseTarget) return bad(res, "FIREBASE_USER_NOT_FOUND", "Firebase account not found.", 404);
+        if (!firebaseTarget)
+          return bad(
+            res,
+            "FIREBASE_USER_NOT_FOUND",
+            "Firebase account not found.",
+            404,
+          );
         const claims = { ...(firebaseTarget.customClaims ?? {}) };
         delete claims.admin;
         delete claims.primaryAdmin;
         await auth.setCustomUserClaims(target.uid, claims);
         await auth.revokeRefreshTokens(target.uid);
-        await db.query("UPDATE users SET role = 'USER', is_primary_admin = FALSE WHERE id = ?", [id]);
+        await db.query(
+          "UPDATE users SET role = 'USER', is_primary_admin = FALSE WHERE id = ?",
+          [id],
+        );
         return res.json({ message: "Admin access removed" });
       }
 

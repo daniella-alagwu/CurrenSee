@@ -1,16 +1,23 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiException implements Exception {
-  ApiException(this.message);
+  ApiException(this.message, {this.code, this.statusCode});
   final String message;
+  final String? code;
+  final int? statusCode;
+
+  bool get isSuspended => code == 'ACCOUNT_SUSPENDED';
   @override
   String toString() => message;
 }
 
 class ApiClient {
   ApiClient._();
+
+  static final ValueNotifier<String?> suspendedUid = ValueNotifier<String?>(null);
 
   static Map<String, dynamic>? _pendingSignupProfile;
   static String? _pendingSignupUid;
@@ -101,7 +108,11 @@ class ApiClient {
       final message = error is Map<String, dynamic>
           ? error['message'] ?? 'Something went wrong.'
           : 'Something went wrong.';
-      throw ApiException(message);
+      final code = error is Map<String, dynamic> ? error['code'] as String? : null;
+      if (code == 'ACCOUNT_SUSPENDED') {
+        suspendedUid.value = user.uid;
+      }
+      throw ApiException('$message', code: code, statusCode: response.statusCode);
     }
     return decoded;
   }
@@ -126,7 +137,7 @@ class ApiClient {
           .whereType<Map<String, dynamic>>()
           .toList();
 
-
+  // User Base Info
   static Future<Map<String, dynamic>> getCurrentUser() =>
       _authedGet('/users/me');
 
@@ -141,6 +152,8 @@ class ApiClient {
   static Future<void> updateProfile(Map<String, dynamic> changes) async {
     await _authedPatch('/users/profile', changes);
   }
+
+  // Support chat (user side)
   static Future<List<Map<String, dynamic>>> getMessages() async =>
       _items(await _authedGet('/users/messages'));
 
@@ -148,6 +161,21 @@ class ApiClient {
     await _authedPost('/users/messages', {'body': body});
   }
 
+  /// Suspended users: sends an appeal. The server tags it ACCOUNT_SUSPENSION_APPEAL
+  /// so it shows up in the admin's support inbox as an appeal.
+  static Future<void> submitSuspensionAppeal(String body) async {
+    await _authedPost('/users/suspension-appeal', {'body': body});
+  }
+
+  /// 'ACTIVE' or 'SUSPENDED'. /users/me is not blocked for suspended accounts.
+  static Future<String> getMyStatus() async {
+    final data = await getCurrentUser();
+    final user = data['user'];
+    final status = user is Map<String, dynamic> ? user['status'] : null;
+    return '${status ?? 'ACTIVE'}'.toUpperCase();
+  }
+
+  // Support chat (admin side)
   static Future<List<Map<String, dynamic>>> getAdminThreads() async =>
       _items(await _authedGet('/admin/messages/threads'));
 
@@ -157,8 +185,11 @@ class ApiClient {
   static Future<void> adminReply(int userId, String body) async {
     await _authedPost('/admin/messages/threads/$userId', {'body': body});
   }
+
+  // Admin: dashboard + user management
   static Future<Map<String, dynamic>> getAdminStats() =>
       _authedGet('/admin/stats');
+
 
   static Future<Map<String, dynamic>> getAdminUsers({
     String query = '',
@@ -171,15 +202,16 @@ class ApiClient {
         queryParameters: {'q': query, 'limit': '$limit', 'offset': '$offset'},
       );
 
+
   static Future<Map<String, dynamic>> getAdminUser(int id) =>
       _authedGet('/admin/users/$id');
 
- 
+  /// action: suspend | unsuspend | promote | demote | delete
   static Future<void> adminUserAction(int id, String action) async {
     await _authedPost('/admin/users/$id/$action', {});
   }
 
- 
+  // Push notifications & alerts
   static Future<void> registerDeviceToken(String token, String platform) async {
     await _authedPost('/users/device-token', {'token': token, 'platform': platform});
   }
@@ -202,7 +234,7 @@ class ApiClient {
     required String baseCode,
     required String targetCode,
     required String threshold,
-    required String direction, 
+    required String direction, // 'ABOVE' | 'BELOW'
   }) async {
     await _authedPost('/users/alerts', {
       'baseCode': baseCode,
@@ -216,7 +248,7 @@ class ApiClient {
     await _authedPost('/users/alerts/$id/delete', {});
   }
 
-
+  // Conversions
   static Future<Map<String, dynamic>> saveConversion({
     required String fromCode,
     required String toCode,
@@ -242,6 +274,25 @@ class ApiClient {
           'offset': '$offset',
         },
       );
+
+
+// Market news
+
+static Future<List<Map<String, dynamic>>> getNews({
+  int limit = 20,
+}) async =>
+    _items(
+      await _authedRequest(
+        'GET',
+        '/users/news',
+        queryParameters: {
+          'limit': '$limit',
+        },
+      ),
+    );
+
+
+  // Verification & Admin Identity Endpoints
   static Future<void> sendOtp() async {
     await _authedPost('/users/otp/send', {});
   }
@@ -253,7 +304,7 @@ class ApiClient {
   static Future<Map<String, dynamic>> getAdminIdentity() =>
       _authedGet('/admin/me');
 
- 
+  // Authentication Signup Profile
   static Future<void> registerProfile({
     String? name,
     String? countryCode,

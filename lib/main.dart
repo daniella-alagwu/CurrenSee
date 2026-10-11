@@ -88,6 +88,6 @@ class _StartupErrorScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
+    );   
   }
 }

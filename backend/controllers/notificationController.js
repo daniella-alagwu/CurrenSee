@@ -10,7 +10,7 @@ async function userId(uid) {
   return rows[0]?.id ?? null;
 }
 
-/* ---------- device tokens ---------- */
+// device tokens 
 
 export const registerDeviceToken = async (req, res, next) => {
   const { token, platform } = req.body ?? {};
@@ -21,7 +21,7 @@ export const registerDeviceToken = async (req, res, next) => {
   try {
     const id = await userId(req.firebaseUser.uid);
     if (!id) return noProfile(res);
-    // A token belongs to one device; if another account signed in there, it moves to this user.
+
     await db.query(
       `INSERT INTO device_tokens (user_id, fcm_token, platform) VALUES (?, ?, ?)
        ON DUPLICATE KEY UPDATE user_id = VALUES(user_id), platform = VALUES(platform)`,
@@ -48,7 +48,7 @@ export const removeDeviceToken = async (req, res, next) => {
   }
 };
 
-/* ---------- notification inbox ---------- */
+// notification inbox
 
 export const listNotifications = async (req, res, next) => {
   try {
@@ -82,7 +82,7 @@ export const markAllRead = async (req, res, next) => {
   }
 };
 
-/* ---------- rate alerts ---------- */
+// rate alerts 
 
 const MAX_ACTIVE_ALERTS = 20;
 const thresholdPattern = /^\d{1,10}(?:\.\d{1,8})?$/;
@@ -154,7 +154,7 @@ export const deleteAlert = async (req, res, next) => {
   }
 };
 
-/* ---------- admin announcement ---------- */
+//  admin announcement 
 
 export const sendAnnouncement = async (req, res, next) => {
   const title = typeof req.body?.title === "string" ? req.body.title.trim() : "";

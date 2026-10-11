@@ -16,6 +16,7 @@ dependencies:
   firebase_core: ^4.15.0
   firebase_auth: ^6.7.0
   http: ^1.6.0
+  url_launcher: ^6.3.2
   countries_utils: ^2.0.0
   currency_picker: ^2.0.22
   image_picker: ^1.2.3
