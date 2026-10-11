@@ -4,8 +4,6 @@ import 'package:currensee/screens/notifications_screen.dart';
 import 'package:currensee/services/notification_store.dart';
 import 'package:currensee/services/user_store.dart';
 import 'user_avatar.dart';
-
-/// Notification bell (with unread badge) + profile avatar that opens the right-side menu.
 class HeaderActions extends StatelessWidget {
   const HeaderActions({
     super.key,

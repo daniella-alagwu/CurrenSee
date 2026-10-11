@@ -245,9 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  //  header
-
   Widget _topBar() {
     return Row(
       children: [
@@ -306,8 +303,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
-  //  quick convert
 
   Widget _converterCard() {
     final amount = _amount;
@@ -661,9 +656,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  //  quick actions
-
   Widget _quickActions() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -775,7 +767,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-//  helpers
+
 
 class _Card extends StatelessWidget {
   const _Card({required this.child, this.radius = 20});

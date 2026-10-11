@@ -17,11 +17,10 @@ router.post("/messages/threads/:userId", requireAuth, requireAdmin, adminReply);
 
 router.post("/announcements", requireAuth, requireAdmin, sendAnnouncement);
 
-// Dashboard + user management
 router.get("/stats", requireAuth, requireAdmin, getStats);
 router.get("/users", requireAuth, requireAdmin, listUsers);
 router.get("/users/:id", requireAuth, requireAdmin, getUser);
-// :action = suspend | unsuspend | promote | demote | delete
+
 router.post("/users/:id/:action", requireAuth, requireAdmin, userAction);
 
 export default router;

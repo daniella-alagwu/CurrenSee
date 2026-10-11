@@ -28,7 +28,6 @@ class _MainShellState extends State<MainShell> {
     super.initState();
     NotificationService.start();
     NotificationStore.instance.start();
-    // A push that arrives while the app is open: refresh the badge and show it.
     _pushSub = NotificationService.foreground.listen((m) {
       NotificationStore.instance.refresh();
       final n = m.notification;

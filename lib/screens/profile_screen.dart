@@ -8,7 +8,7 @@ import 'package:currensee/screens/home/widgets/header_actions.dart';
 import 'package:currensee/screens/home/widgets/user_avatar.dart';
 import 'menu/profile_settings_screen.dart';
 
-/// Read-only view of the account. Editing lives in Profile settings (right-side menu).
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.onOpenMenu});
   final VoidCallback onOpenMenu;

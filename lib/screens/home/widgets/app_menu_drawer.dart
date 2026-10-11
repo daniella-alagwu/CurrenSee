@@ -8,7 +8,7 @@ import 'package:currensee/screens/menu/transaction_limits_screen.dart';
 import 'package:currensee/services/user_store.dart';
 import 'user_avatar.dart';
 
-/// Slides in from the right (used as Scaffold.endDrawer).
+
 class AppMenuDrawer extends StatelessWidget {
   const AppMenuDrawer({super.key});
 
@@ -19,7 +19,7 @@ class AppMenuDrawer extends StatelessWidget {
       trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
       onTap: () {
         final nav = Navigator.of(context);
-        nav.pop(); // close the drawer
+        nav.pop();
         nav.push(MaterialPageRoute(builder: (_) => screen));
       },
     );

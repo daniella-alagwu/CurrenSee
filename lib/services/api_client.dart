@@ -126,7 +126,7 @@ class ApiClient {
           .whereType<Map<String, dynamic>>()
           .toList();
 
-  // User Base Info
+
   static Future<Map<String, dynamic>> getCurrentUser() =>
       _authedGet('/users/me');
 
@@ -141,8 +141,6 @@ class ApiClient {
   static Future<void> updateProfile(Map<String, dynamic> changes) async {
     await _authedPatch('/users/profile', changes);
   }
-
-  // Support chat (user side)
   static Future<List<Map<String, dynamic>>> getMessages() async =>
       _items(await _authedGet('/users/messages'));
 
@@ -150,7 +148,6 @@ class ApiClient {
     await _authedPost('/users/messages', {'body': body});
   }
 
-  // Support chat (admin side)
   static Future<List<Map<String, dynamic>>> getAdminThreads() async =>
       _items(await _authedGet('/admin/messages/threads'));
 
@@ -160,12 +157,9 @@ class ApiClient {
   static Future<void> adminReply(int userId, String body) async {
     await _authedPost('/admin/messages/threads/$userId', {'body': body});
   }
-
-  // Admin: dashboard + user management
   static Future<Map<String, dynamic>> getAdminStats() =>
       _authedGet('/admin/stats');
 
-  /// { items: [...], total, limit, offset }
   static Future<Map<String, dynamic>> getAdminUsers({
     String query = '',
     int limit = 30,
@@ -177,16 +171,15 @@ class ApiClient {
         queryParameters: {'q': query, 'limit': '$limit', 'offset': '$offset'},
       );
 
-  /// { user: {...} }
   static Future<Map<String, dynamic>> getAdminUser(int id) =>
       _authedGet('/admin/users/$id');
 
-  /// action: suspend | unsuspend | promote | demote | delete
+ 
   static Future<void> adminUserAction(int id, String action) async {
     await _authedPost('/admin/users/$id/$action', {});
   }
 
-  // Push notifications & alerts
+ 
   static Future<void> registerDeviceToken(String token, String platform) async {
     await _authedPost('/users/device-token', {'token': token, 'platform': platform});
   }
@@ -209,7 +202,7 @@ class ApiClient {
     required String baseCode,
     required String targetCode,
     required String threshold,
-    required String direction, // 'ABOVE' | 'BELOW'
+    required String direction, 
   }) async {
     await _authedPost('/users/alerts', {
       'baseCode': baseCode,
@@ -223,7 +216,7 @@ class ApiClient {
     await _authedPost('/users/alerts/$id/delete', {});
   }
 
-  // Conversions
+
   static Future<Map<String, dynamic>> saveConversion({
     required String fromCode,
     required String toCode,
@@ -249,8 +242,6 @@ class ApiClient {
           'offset': '$offset',
         },
       );
-
-  // Verification & Admin Identity Endpoints
   static Future<void> sendOtp() async {
     await _authedPost('/users/otp/send', {});
   }
@@ -262,7 +253,7 @@ class ApiClient {
   static Future<Map<String, dynamic>> getAdminIdentity() =>
       _authedGet('/admin/me');
 
-  // Authentication Signup Profile
+ 
   static Future<void> registerProfile({
     String? name,
     String? countryCode,

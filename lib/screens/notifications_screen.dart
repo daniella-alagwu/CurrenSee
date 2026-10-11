@@ -12,7 +12,7 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final _store = NotificationStore.instance;
-  Set<Object?> _newIds = {}; // unread when the screen opened, so they stay highlighted
+  Set<Object?> _newIds = {};
 
   @override
   void initState() {

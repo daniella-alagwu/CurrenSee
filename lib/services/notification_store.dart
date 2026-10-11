@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:currensee/services/api_client.dart';
 
-/// In-app notification inbox + unread badge count.
+
 class NotificationStore extends ChangeNotifier {
   NotificationStore._();
   static final NotificationStore instance = NotificationStore._();

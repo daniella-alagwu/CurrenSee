@@ -4,7 +4,6 @@ import 'package:currensee/services/api_client.dart';
 import 'package:currensee/services/notification_service.dart';
 import 'package:currensee/services/notification_store.dart';
 
-/// Single source of truth for the signed-in user's profile + preferences.
 class UserStore extends ChangeNotifier {
   UserStore._();
   static final UserStore instance = UserStore._();
