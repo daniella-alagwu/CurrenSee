@@ -4,6 +4,8 @@ export const getCurrentUser = async (req, res, next) => {
   try {
     const [rows] = await db.query(
       `SELECT u.id, u.email, u.name, u.avatar, u.status,
+        u.auth_provider AS authProvider,
+        u.photo_url AS photoUrl,
         u.country_code AS countryCode,
         u.country_name AS countryName,
         p.default_base_currency AS defaultBaseCurrency,
@@ -41,6 +43,8 @@ export const getCurrentUser = async (req, res, next) => {
         name: row.name,
         avatar: row.avatar,
         status: row.status || "ACTIVE",
+        authProvider: row.authProvider || "password",
+        photoUrl: row.photoUrl,
         countryCode: row.countryCode,
         countryName: row.countryName,
         preferences: {
@@ -103,12 +107,10 @@ export const updateProfile = async (req, res, next) => {
   if (Object.hasOwn(body, "avatar")) {
     const avatar = body.avatar;
 
-    
     if (avatar === null) {
       sets.push("avatar = ?");
       values.push(null);
     } else {
-      
       if (typeof avatar !== "string" || !avatar.startsWith("data:image/")) {
         return bad(res, "INVALID_AVATAR", "Upload a valid image.");
       }
@@ -183,7 +185,6 @@ export const updateProfile = async (req, res, next) => {
         [users[0].id],
       );
 
-      
       await connection.query(
         `UPDATE user_preferences
          SET default_base_currency = ?,

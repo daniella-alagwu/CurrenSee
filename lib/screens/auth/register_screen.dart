@@ -3,6 +3,7 @@ import 'package:currency_picker/currency_picker.dart' as currency_picker;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:currensee/auth/auth_widgets.dart';
+import 'package:currensee/auth/social_login_buttons.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/api_client.dart';
 
@@ -309,6 +310,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               isLoading: _loading,
               onPressed: _register,
             ),
+            const SocialLoginButtons(googleLabel: 'Sign up with Google'),
             const SizedBox(height: 8),
             Center(
               child: AuthLink(
