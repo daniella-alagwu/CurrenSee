@@ -5,6 +5,7 @@ import 'package:currensee/services/rates_service.dart';
 import 'package:currensee/services/user_store.dart';
 import 'package:currensee/utils/format.dart';
 import 'package:currensee/screens/home/widgets/currency_dropdown.dart';
+import 'package:currensee/screens/home/widgets/currency_picker.dart';
 import 'package:currensee/screens/home/widgets/header_actions.dart';
 import 'package:currensee/screens/home/widgets/rate_sparkline.dart';
 
@@ -28,6 +29,14 @@ class _RatesScreenState extends State<RatesScreen> {
   bool _loading = true;
   String? _error;
   int _request = 0;
+  final _search = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -162,8 +171,7 @@ class _RatesScreenState extends State<RatesScreen> {
   @override
   Widget build(BuildContext context) {
     final s = _snapshot;
-    final codes =
-        RatesService.supported.where((c) => c != _base).toList();
+    final codes = searchCurrencies(_query, exclude: _base);
 
     return Scaffold(
       backgroundColor: AppColors.surfaceSlate,
@@ -190,6 +198,37 @@ class _RatesScreenState extends State<RatesScreen> {
                 setState(() => _base = c);
                 _load();
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: TextField(
+              controller: _search,
+              onChanged: (v) => setState(() => _query = v),
+              decoration: InputDecoration(
+                hintText: 'Search currencies',
+                prefixIcon: const Icon(Icons.search_rounded),
+                suffixIcon: _query.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        onPressed: () {
+                          _search.clear();
+                          setState(() => _query = '');
+                        },
+                      ),
+                filled: true,
+                fillColor: AppColors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.borderSlate),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.borderSlate),
+                ),
+              ),
             ),
           ),
           if (s != null)
@@ -253,6 +292,20 @@ class _RatesScreenState extends State<RatesScreen> {
                   onPressed: _load,
                 ),
               ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (codes.isEmpty) {
+      return ListView(
+        children: const [
+          SizedBox(height: 80),
+          Center(
+            child: Text(
+              'No currency matches your search.',
+              style: TextStyle(color: AppColors.textMuted),
             ),
           ),
         ],

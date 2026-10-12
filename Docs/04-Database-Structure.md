@@ -94,7 +94,7 @@ This confuses a lot of people, so read this first.
 | `symbol` | e.g. `₦` |
 | `is_active` | `FALSE` hides the currency |
 
-The schema file pre-loads **19 currencies**: USD, EUR, GBP, JPY, CAD, AUD, INR, NGN, CHF, CNY, SGD, ZAR, MXN, BRL, NZD, SEK, NOK, HKD, KRW.
+The schema file pre-loads **106 currencies**: USD, EUR, GBP, JPY, CAD, AUD, INR, NGN, CHF, CNY, SGD, ZAR, MXN, BRL, NZD, SEK, NOK, HKD, KRW and many others
 
 ### 3.4 `conversion_history` - saved conversions
 
@@ -217,7 +217,7 @@ We created these while planning. The app does not read or write them yet, so the
 1. Create an empty MySQL database (on Clever Cloud this is already done for you).
 2. Open it in Adminer / phpMyAdmin / MySQL Workbench.
 3. Run all of [`database/currensee_full_schema.sql`](database/currensee_full_schema.sql) **once**.
-4. You will get 14 tables and 19 currencies.
+4. You will get 14 tables and 106 currencies.
 
 > **Do not run the files in `backend/database/migrations/` on top of this.** Those files are only for older databases. The full schema already includes everything, and running them again causes "column already exists" errors.
 

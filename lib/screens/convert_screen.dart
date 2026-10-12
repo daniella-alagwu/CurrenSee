@@ -211,7 +211,7 @@ class _ConvertScreenState extends State<ConvertScreen> {
         (amount != null && rate != null) ? amount * rate : null;
     final toInfo = RatesService.info(_to);
     final others =
-        RatesService.supported.where((c) => c != _from).toList();
+        RatesService.supported.where((c) => c != _from).take(12).toList();
 
     return Scaffold(
       backgroundColor: AppColors.surfaceSlate,

@@ -8,6 +8,7 @@ import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'auth/auth_gate.dart';
 import 'screens/admin/admin_home.dart';
+import 'services/rates_service.dart';
 
 Future<void> main() async {
   final binding = WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,10 @@ Future<void> main() async {
   } catch (e) {
     startupError = e;
   }
+
+
+  await RatesService.ensureSupported()
+      .timeout(const Duration(seconds: 4), onTimeout: () {});
 
   runApp(CurrenSeeApp(startupError: startupError));
 
