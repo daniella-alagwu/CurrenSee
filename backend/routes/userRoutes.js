@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   createUser,
+  restoreSignIn,
   sendOtp,
   verifyOtp,
 } from "../controllers/userController.js";
@@ -45,6 +46,10 @@ import {
 import { getNews } from "../controllers/newsController.js";
 
 const router = express.Router();
+
+// Public: lets a user whose account was suspended by an older version sign in
+// so the app can show the suspended page (see restoreSignIn).
+router.post("/restore-signin", restoreSignIn);
 
 // Profile creation.
 // Missing profiles are allowed through requireActiveAccount.
