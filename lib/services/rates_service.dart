@@ -1,19 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:currensee/data/currency_catalog.dart';
+
+// Keeps existing `import rates_service.dart` + CurrencyInfo usages working.
+export 'package:currensee/data/currency_catalog.dart' show CurrencyInfo;
 
 class RatesException implements Exception {
   RatesException(this.message);
   final String message;
   @override
   String toString() => message;
-}
-
-class CurrencyInfo {
-  const CurrencyInfo(this.code, this.name, this.symbol, this.flag);
-  final String code;
-  final String name;
-  final String symbol;
-  final String flag;
 }
 
 class RateSnapshot {
@@ -27,35 +23,46 @@ class RatesService {
 
   static const String _base = 'https://api.frankfurter.dev/v2';
 
+  static List<String> _supported = List.of(kLaunchCurrencies);
+  static Set<String> _supportedSet = Set.of(kLaunchCurrencies);
+  static Future<void>? _loading;
 
-  static const Map<String, CurrencyInfo> _info = {
-    'USD': CurrencyInfo('USD', 'United States Dollar', r'$', '🇺🇸'),
-    'EUR': CurrencyInfo('EUR', 'Euro', '€', '🇪🇺'),
-    'GBP': CurrencyInfo('GBP', 'British Pound', '£', '🇬🇧'),
-    'JPY': CurrencyInfo('JPY', 'Japanese Yen', '¥', '🇯🇵'),
-    'CAD': CurrencyInfo('CAD', 'Canadian Dollar', r'$', '🇨🇦'),
-    'AUD': CurrencyInfo('AUD', 'Australian Dollar', r'$', '🇦🇺'),
-    'INR': CurrencyInfo('INR', 'Indian Rupee', '₹', '🇮🇳'),
-    'NGN': CurrencyInfo('NGN', 'Nigerian Naira', '₦', '🇳🇬'),
-    'CHF': CurrencyInfo('CHF', 'Swiss Franc', 'CHF ', '🇨🇭'),
-    'CNY': CurrencyInfo('CNY', 'Chinese Yuan', '¥', '🇨🇳'),
-    'SGD': CurrencyInfo('SGD', 'Singapore Dollar', r'$', '🇸🇬'),
-    'ZAR': CurrencyInfo('ZAR', 'South African Rand', 'R', '🇿🇦'),
-    'MXN': CurrencyInfo('MXN', 'Mexican Peso', r'$', '🇲🇽'),
-    'BRL': CurrencyInfo('BRL', 'Brazilian Real', r'R$', '🇧🇷'),
-    'NZD': CurrencyInfo('NZD', 'New Zealand Dollar', r'$', '🇳🇿'),
-    'SEK': CurrencyInfo('SEK', 'Swedish Krona', 'kr ', '🇸🇪'),
-    'NOK': CurrencyInfo('NOK', 'Norwegian Krone', 'kr ', '🇳🇴'),
-    'HKD': CurrencyInfo('HKD', 'Hong Kong Dollar', r'$', '🇭🇰'),
-    'KRW': CurrencyInfo('KRW', 'South Korean Won', '₩', '🇰🇷'),
-  };
+  static List<String> get supported => _supported;
 
-  static List<String> get supported => _info.keys.toList(growable: false);
-
-  static bool isSupported(String code) => _info.containsKey(code);
+  static bool isSupported(String code) => _supportedSet.contains(code);
 
   static CurrencyInfo info(String code) =>
-      _info[code] ?? CurrencyInfo(code, code, code, '🏳️');
+      kCurrencyCatalog[code] ?? CurrencyInfo(code, code, code, '🏳️');
+
+  /// Intersects our catalog with what the rates API really serves, so we never
+  /// offer a currency that would make a rates request fail. Never throws; on
+  /// failure the launch set stays in place and the next call retries.
+  static Future<void> ensureSupported() => _loading ??= _loadSupported();
+
+  static Future<void> _loadSupported() async {
+    try {
+      final rows =
+          await _getJson(Uri.parse('$_base/currencies')) as List<dynamic>? ??
+              const [];
+      final served = <String>{
+        for (final row in rows.whereType<Map<String, dynamic>>())
+          if (row['iso_code'] is String)
+            (row['iso_code'] as String).toUpperCase(),
+      };
+      final list = [
+        for (final code in kCurrencyCatalog.keys)
+          if (served.contains(code)) code,
+      ];
+      if (list.isNotEmpty && served.contains('USD')) {
+        _supported = list;
+        _supportedSet = Set.of(list);
+      } else {
+        _loading = null;
+      }
+    } catch (_) {
+      _loading = null;
+    }
+  }
 
   static String startingBase(String? userCurrency) =>
       (userCurrency != null && isSupported(userCurrency)) ? userCurrency : 'USD';
@@ -67,6 +74,7 @@ class RatesService {
   }
 
   static Future<RateSnapshot> latest(String base) async {
+    await ensureSupported();
     final targets = supported.where((c) => c != base).join(',');
     final uri = Uri.parse('$_base/rates').replace(queryParameters: {
       'base': base,

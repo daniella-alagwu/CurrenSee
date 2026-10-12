@@ -4,16 +4,16 @@
 
 |                   |                                                               |
 | ----------------- | ------------------------------------------------------------- |
-| **Batch / Group** | `<<FILL IN>>`                                                 |
+| **Batch / Group** | 061/058 - ADSE                                            |
 | **Group lead**    | Daniella                                                      |
-| **Team**          | Daniella, Tobi, Kaamil, David, Vishal, Emmanuel               |
+| **Team**          | Alagwu Daniella, Osinoiki Tobi, Otufowora Kaamil, Olawore David, Sanjay Vishal, Akonye Emmanuel               |
 | **Live backend**  | https://currensee-f0sf.onrender.com (health check: `/health`) |
 
 ---
 
 ## What is CurrenSee?
 
-CurrenSee lets people **convert money between currencies**, see **rates and trends**, **save their conversion history**, set **rate alerts**, read **currency news**, and **chat with support**. Admins can manage users and reply to support messages.
+CurrenSee, a multi platform application lets people **convert money between currencies**, see **rates and trends**, **save their conversion history**, set **rate alerts**, read **currency news**, and **chat with support**. Admins can manage users and reply to support messages.
 
 It does not move any money. It is a calculation and information tool.
 

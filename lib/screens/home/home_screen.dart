@@ -9,6 +9,7 @@ import 'package:currensee/services/user_store.dart';
 import 'package:currensee/utils/format.dart';
 import 'package:currensee/utils/toast.dart';
 
+import 'widgets/currency_picker.dart';
 import 'widgets/header_actions.dart';
 import 'conversion_history_screen.dart';
 import 'package:currensee/screens/news/news_screen.dart';
@@ -391,7 +392,7 @@ return Row(
                 margin: const EdgeInsets.only(top: 10), // margin top
                 alignment: Alignment.center,            // center horizontally
                 child: const Text(
-                  'Here\'s your currency snapshot for today.',
+                  'Real time currency snapshots.',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -688,42 +689,30 @@ return Row(
               _Flag(info.flag),
               const SizedBox(width: 6),
               Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: code,
-                    isExpanded: true,
-                    isDense: true,
-                    dropdownColor: AppColors.white,
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 20,
-                    ),
-                    style: const TextStyle(
-                      color: AppColors.textDark,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    selectedItemBuilder: (_) => [
-                      for (final c in RatesService.supported)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(c),
-                        ),
-                    ],
-                    items: [
-                      for (final c in RatesService.supported)
-                        DropdownMenuItem(
-                          value: c,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () async {
+                    final picked =
+                        await showCurrencyPicker(context, selected: code);
+                    if (picked != null && picked != code) onChanged(picked);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Expanded(
                           child: Text(
-                            '${RatesService.info(c).flag}  $c',
+                            code,
+                            style: const TextStyle(
+                              color: AppColors.textDark,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
-                    ],
-                    onChanged: (v) {
-                      if (v != null) {
-                        onChanged(v);
-                      }
-                    },
+                        const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
