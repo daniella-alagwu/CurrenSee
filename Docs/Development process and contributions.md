@@ -7,6 +7,8 @@ The group used Flutter for the application, Firebase Authentication for account 
 
 
 
+
+
 **Team organization**
 
 The group first reviewed the project brief, identified its requirements, and divided responsibilities. The group lead, Daniella set up the shared GitHub repository, invited the other members as collaborators, and led the group’s user-interface work. The team used branches and GitHub pushes/merges to combine work.
@@ -23,12 +25,14 @@ Kaamil — Rates and notifications:
 Exchange rates, historical rates, rate alerts, notifications and integration.
 Worked on the rates provider, rate trends, alert checking and notification features, and connecting those services to the app and backend.
 
-Vishal — Documentation and testing:
-Documentation and testing coordination.
-Was assigned to track progress, create project documentation and coordinate testing.
+David — Documentation and Testing:
+Tracked project progress; organised project documentation; documented the development process and team contributions; coordinated testing activities.
 
-Emmanuel — Research and presentation:
-Research, content and presentation leadership. Researched and prepared project content and coordinated the project presentation.
+Vishal — Research and FAQ:
+Researched relevant project information; prepared supporting content for the documentation and user manual; developed FAQs to help users understand the application and its features.
+
+Emmanuel — Presentation:
+Led presentation coordination; organised the presentation of project features, objectives and development process; helped prepare the group to demonstrate CurrenSee.
 
 
 
@@ -54,6 +58,8 @@ The backend checks alert thresholds on a scheduled interval and creates in-app n
 
 5. Integration and refinement
 As the UI, backend, rates and notification work came together, the team addressed integration issues including changing API addresses, unstable local port forwarding, login/profile navigation and currency-preference consistency. The app’s API client now sends Firebase ID tokens to the protected backend routes, and account setup stores the profile and selected default currency in MySQL.
+
+
 
 
 
