@@ -44,7 +44,7 @@ class FAQScreen extends StatelessWidget {
       },
       {
         'question': 'Is my data secure?',
-        'answer': 'Yes. Your account is protected with Firebase Authentication. We store your profile, preferences and saved conversions securely so they follow you across devices.',
+        'answer': 'Yes. Your account is protected with industry-standard security. We store your profile, preferences and saved conversions securely so they follow you across devices.',
         'icon': Icons.security_rounded,
       },
       {
@@ -158,7 +158,7 @@ class FAQScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Center(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -168,18 +168,26 @@ class FAQScreen extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Column(
                 children: [
                   Icon(Icons.lightbulb_outline_rounded,
-                      color: AppColors.forestGreen, size: 20),
-                  const SizedBox(width: 8),
+                      color: AppColors.forestGreen, size: 24),
+                  const SizedBox(height: 8),
                   Text(
-                    'Still need help? Check the Contact section!',
+                    'Still need help?',
                     style: TextStyle(
                       color: AppColors.textDark,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Check the Contact section',
+                    style: TextStyle(
+                      color: AppColors.textDark.withOpacity(0.8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
