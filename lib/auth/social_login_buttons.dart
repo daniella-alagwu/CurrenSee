@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:currensee/auth/auth_widgets.dart';
+import 'package:currensee/auth/google_logo.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/social_auth_service.dart';
 
-//fo sign up with google
+
 class SocialLoginButtons extends StatefulWidget {
   const SocialLoginButtons({super.key, this.googleLabel = 'Continue with Google'});
 
@@ -21,7 +22,7 @@ class _SocialLoginButtonsState extends State<SocialLoginButtons> {
     setState(() => _busy = true);
     try {
       await SocialAuthService.signInWithGoogle();
-      // AuthGate reacts to the new session; just close the login/sign-up page.
+      
       if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       if (mounted && !SocialAuthService.isCancelled(e)) {
@@ -34,9 +35,11 @@ class _SocialLoginButtonsState extends State<SocialLoginButtons> {
 
   @override
   Widget build(BuildContext context) {
+    // Tighter spacing on desktop so login/sign-up fit in the window.
+    final wide = AuthLayout.isWide(context);
     return Column(
       children: [
-        const SizedBox(height: 20),
+        SizedBox(height: wide ? 14 : 20),
         Row(children: const [
           Expanded(child: Divider(color: AppColors.borderSlate)),
           Padding(
@@ -45,7 +48,7 @@ class _SocialLoginButtonsState extends State<SocialLoginButtons> {
           ),
           Expanded(child: Divider(color: AppColors.borderSlate)),
         ]),
-        const SizedBox(height: 16),
+        SizedBox(height: wide ? 12 : 16),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
@@ -53,7 +56,7 @@ class _SocialLoginButtonsState extends State<SocialLoginButtons> {
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.textDark,
               side: const BorderSide(color: AppColors.borderSlate),
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: wide ? 12 : 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             child: _busy
@@ -65,21 +68,7 @@ class _SocialLoginButtonsState extends State<SocialLoginButtons> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 22,
-                        height: 22,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.borderSlate),
-                        ),
-                        child: const Text('G',
-                            style: TextStyle(
-                                color: Color(0xFF4285F4),
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                                height: 1)),
-                      ),
+                      const GoogleLogo(size: 20),
                       const SizedBox(width: 10),
                       Text(widget.googleLabel,
                           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
