@@ -47,3 +47,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+#credentials file
+/Docs/06-Login-Credentials.md
+
+#database backup
+/Docs/database/currensee_backup.sql
+
