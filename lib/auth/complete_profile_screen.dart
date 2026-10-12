@@ -6,7 +6,7 @@ import 'package:currensee/auth/auth_widgets.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/api_client.dart';
 
-//once for people who signed up with socal login... to collect their data like country and all.
+/// Shown once to people who signed up with Google to get their country, and other info
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key, required this.onSaved});
 
@@ -99,10 +99,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     return AuthScaffold(
       title: first.isEmpty ? 'Almost there' : 'Welcome, $first',
       subtitle: 'Choose your country and preferred starting currency to finish setting up.',
+      maxWidth: 560,
       child: Form(
         key: _formKey,
         child: Column(
           children: [
+            AuthFieldRow(children: [
             Autocomplete<Map<String, dynamic>>(
               displayStringForOption: (c) => c['name'] as String? ?? '',
               optionsBuilder: (value) {
@@ -151,7 +153,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             FormField<String>(
               validator: (_) => _currencyCode == null ? 'Choose a default currency' : null,
               builder: (field) => Column(
@@ -183,6 +184,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 ],
               ),
             ),
+            ]),
             const SizedBox(height: 24),
             GoldButton(label: 'Continue', isLoading: _saving, onPressed: _save),
             const SizedBox(height: 8),

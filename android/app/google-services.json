@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "513087315519-0lqd2aauh99onkgtc6dtrh47v7he9ulu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.currensee",
+            "certificate_hash": "5e51d7bde45b5d14fabdffc1494e9181e7c08c7a"
+          }
+        },
+        {
           "client_id": "513087315519-p1hq7mb34pf08cifkgt1dj7ufluds2u6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

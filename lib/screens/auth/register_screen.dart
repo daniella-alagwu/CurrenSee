@@ -143,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return AuthScaffold(
       title: 'Create your account',
       subtitle: 'Choose your country and preferred starting currency.',
+      maxWidth: 560,
       child: Form(
         key: _formKey,
         child: Column(
@@ -164,6 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
             ),
             const SizedBox(height: 16),
+            AuthFieldRow(children: [
             AuthTextField(
               controller: _password,
               label: 'Password',
@@ -186,7 +188,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () => setState(() => _obscure = !_obscure),
               ),
             ),
-            const SizedBox(height: 16),
             AuthTextField(
               controller: _confirm,
               label: 'Confirm password',
@@ -196,7 +197,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               validator: (v) =>
                   v != _password.text ? 'Passwords don\'t match' : null,
             ),
+            ]),
             const SizedBox(height: 16),
+            AuthFieldRow(children: [
             Autocomplete<Map<String, dynamic>>(
               displayStringForOption: (country) =>
                   country['name'] as String? ?? '',
@@ -255,7 +258,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             FormField<String>(
               validator: (_) => _currencyCode == null
                   ? 'Choose a default currency'
@@ -304,7 +306,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            ]),
+            SizedBox(height: AuthLayout.isWide(context) ? 18 : 24),
             GoldButton(
               label: 'Create account',
               isLoading: _loading,
