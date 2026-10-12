@@ -7,7 +7,8 @@
     "start": "node server.js",
     "dev": "node --use-system-ca --watch server.js",
     "admin:role": "node scripts/setAdminRole.js",
-    "admin:create:dev": "node scripts/createDevAdmin.js"
+    "admin:create:dev": "node scripts/createDevAdmin.js",
+    "seed:demo-user": "node scripts/seedDemoUser.js"
   },
   "type": "module",
   "dependencies": {
