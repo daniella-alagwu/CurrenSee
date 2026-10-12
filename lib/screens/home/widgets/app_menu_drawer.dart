@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/screens/menu/about_screen.dart';
 import 'package:currensee/screens/menu/contact_screen.dart';
+import 'package:currensee/screens/menu/faq_screen.dart';
 import 'package:currensee/screens/menu/profile_settings_screen.dart';
 import 'package:currensee/screens/menu/transaction_limits_screen.dart';
 import 'package:currensee/screens/menu/user_guide_screen.dart';
@@ -63,6 +64,7 @@ class AppMenuDrawer extends StatelessWidget {
                 const ProfileSettingsScreen()),
             _item(context, Icons.info_outline_rounded, 'About us', const AboutScreen()),
             _item(context, Icons.menu_book_rounded, 'User guide', const UserGuideScreen()),
+            _item(context, Icons.help_outline_rounded, 'FAQs', const FAQScreen()),
             _item(context, Icons.speed_rounded, 'Transaction limits',
                 const TransactionLimitsScreen()),
             FutureBuilder<IdTokenResult>(
