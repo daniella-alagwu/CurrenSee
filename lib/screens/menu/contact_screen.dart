@@ -34,8 +34,6 @@ class ContactScreen extends StatelessWidget {
     );
   }
 }
-
-// Sample details — replace with the client's real ones before launch.
 class _ContactInfo extends StatelessWidget {
   const _ContactInfo();
 

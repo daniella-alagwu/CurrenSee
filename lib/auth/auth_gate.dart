@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../constants/colors.dart';
 import 'package:currensee/screens/welcome_screen.dart';
 import 'package:currensee/screens/suspended_screen.dart';
 import '../services/api_client.dart';
+import '../services/session_store.dart';
+import 'auth_loading_view.dart';
 import 'email_verification_gate.dart';
 
 class AuthGate extends StatelessWidget {
@@ -15,18 +16,16 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: AppColors.white,
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.forestGreen),
-            ),
-          );
+          return const AuthLoadingView();
         }
 
         final user = snapshot.data;
-        if (user == null) return const WelcomeScreen();
+        if (user == null) {
 
-        
+          SessionStore.clear();
+          return const WelcomeScreen();
+        }
+
         return ValueListenableBuilder<String?>(
           valueListenable: ApiClient.suspendedUid,
           builder: (context, suspendedUid, _) {

@@ -90,7 +90,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
       context,
       MaterialPageRoute(builder: (_) => AdminUserDetailScreen(userId: (u['id'] as num).toInt())),
     );
-    if (mounted) _load(); // the user may have been suspended, promoted or deleted
+    if (mounted) _load(); 
   }
 
   @override

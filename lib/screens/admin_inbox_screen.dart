@@ -4,7 +4,6 @@ import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/api_client.dart';
 import 'package:currensee/screens/home/widgets/chat_view.dart';
 
-/// Admin: list of users who have written to support, tap one to reply.
 class AdminInboxScreen extends StatefulWidget {
   const AdminInboxScreen({super.key});
 

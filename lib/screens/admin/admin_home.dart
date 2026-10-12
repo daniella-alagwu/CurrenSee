@@ -46,7 +46,6 @@ class _AdminHomeState extends State<AdminHome> {
       final stats = await ApiClient.getAdminStats();
       if (mounted) setState(() => _stats = stats);
     } catch (_) {
-      // Stats are a nice-to-have; the tools below still work.
     }
   }
 

@@ -27,7 +27,7 @@ class NotificationService {
       });
       _msgSub ??= FirebaseMessaging.onMessage.listen(_controller.add);
     } catch (_) {
-      // Push is optional; in-app notifications still work.
+     
     }
   }
 

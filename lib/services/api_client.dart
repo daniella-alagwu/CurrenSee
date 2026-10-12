@@ -304,6 +304,23 @@ static Future<List<Map<String, dynamic>>> getNews({
   static Future<Map<String, dynamic>> getAdminIdentity() =>
       _authedGet('/admin/me');
 
+  /// Public call (no sign-in needed). Asks the server to re-enable Firebase
+  /// sign-in for an account that was suspended by an older version, so the
+  /// login can succeed and the suspended page can be shown.
+  static Future<void> restoreSignIn(String email) async {
+    try {
+      await http
+          .post(
+            Uri.parse('$baseUrl/users/restore-signin'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(const Duration(seconds: 15));
+    } catch (_) {
+      // Best effort: the login screen shows its normal error if this fails.
+    }
+  }
+
   // Authentication Signup Profile
   static Future<void> registerProfile({
     String? name,

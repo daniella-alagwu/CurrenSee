@@ -3,6 +3,7 @@ import 'package:currency_picker/currency_picker.dart' as currency_picker;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:currensee/auth/auth_widgets.dart';
+import 'package:currensee/auth/social_login_buttons.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/services/api_client.dart';
 
@@ -142,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return AuthScaffold(
       title: 'Create your account',
       subtitle: 'Choose your country and preferred starting currency.',
+      maxWidth: 560,
       child: Form(
         key: _formKey,
         child: Column(
@@ -163,6 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
             ),
             const SizedBox(height: 16),
+            AuthFieldRow(children: [
             AuthTextField(
               controller: _password,
               label: 'Password',
@@ -185,7 +188,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () => setState(() => _obscure = !_obscure),
               ),
             ),
-            const SizedBox(height: 16),
             AuthTextField(
               controller: _confirm,
               label: 'Confirm password',
@@ -195,7 +197,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               validator: (v) =>
                   v != _password.text ? 'Passwords don\'t match' : null,
             ),
+            ]),
             const SizedBox(height: 16),
+            AuthFieldRow(children: [
             Autocomplete<Map<String, dynamic>>(
               displayStringForOption: (country) =>
                   country['name'] as String? ?? '',
@@ -254,7 +258,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             FormField<String>(
               validator: (_) => _currencyCode == null
                   ? 'Choose a default currency'
@@ -303,12 +306,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            ]),
+            SizedBox(height: AuthLayout.isWide(context) ? 18 : 24),
             GoldButton(
               label: 'Create account',
               isLoading: _loading,
               onPressed: _register,
             ),
+            const SocialLoginButtons(googleLabel: 'Sign up with Google'),
             const SizedBox(height: 8),
             Center(
               child: AuthLink(

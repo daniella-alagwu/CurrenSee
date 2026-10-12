@@ -15,7 +15,7 @@ class ChatView extends StatefulWidget {
 
   final Future<List<Map<String, dynamic>>> Function() load;
   final Future<void> Function(String body) send;
-  final String mySender; // 'USER' or 'ADMIN'
+  final String mySender;
   final String emptyText;
 
   @override

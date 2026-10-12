@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:currensee/constants/colors.dart';
 import 'package:currensee/auth/auth_widgets.dart';
+import 'package:currensee/auth/social_login_buttons.dart';
+import 'package:currensee/services/api_client.dart';
 
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
@@ -33,11 +35,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _loading = true);
 
+    Future<void> signIn() => FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _email.text.trim(),
+          password: _password.text,
+        );
+
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text,
-      );
+      try {
+        await signIn();
+      } on FirebaseAuthException catch (e) {
+        if (e.code != 'user-disabled') rethrow;
+        // Suspended accounts must still be able to sign in so they can see the
+        // suspended page and appeal. Ask the server to re-enable sign-in, retry once.
+        await ApiClient.restoreSignIn(_email.text.trim());
+        await signIn();
+      }
       if (mounted) {
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
@@ -116,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 24),
             GoldButton(label: 'Log in', isLoading: _loading, onPressed: _login),
+            const SocialLoginButtons(),
             const SizedBox(height: 8),
             Center(
               child: AuthLink(
